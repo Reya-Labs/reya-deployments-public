@@ -1,0 +1,6 @@
+[clone.reyaPassivePerpProxy]
+source = "<%= settings.passivePerpProxyPackage %>"
+target = "<%= settings.passivePerpProxyPackage %>"
+options.owner = "<%= settings.owner %>"
+options.salt = "<%= settings.salt %>"
+depends = ["var.cannonClonePackages"]

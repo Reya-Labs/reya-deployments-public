@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_37dot_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market37DotId %>",
+    { riskMatrixIndex = "<%= settings.market37Dot_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market37Dot_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market37Dot_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market37Dot_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market37Dot_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market37Dot_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market37Dot_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market37Dot_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market37Dot_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market37Dot_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market37Dot_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market37Dot_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market37Dot_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market37Dot_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market37Dot_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market37Dot_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market37Dot_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market37Dot_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market37Dot_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market37Dot_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market37Dot_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market37Dot_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_37dot",
+    "invoke.passive_perp_market_config_system_owner",
+]

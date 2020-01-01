@@ -1,0 +1,20 @@
+include = [
+    "./tokens/usdc-reya-network.toml",
+    "./tokens/usdt.toml",
+    "./tokens/dai.toml",
+    "./tokens/weth.toml",
+    "./tokens/wbtc.toml",
+    "./tokens/wsteth.toml",
+    "./tokens/usde.toml",
+    "./tokens/susde.toml",
+    "./tokens/deusd.toml",
+    "./tokens/sdeusd.toml",
+    "./tokens/srusd.toml",
+    "./tokens/mfone.toml",
+    "./tokens/reya.toml",
+]
+
+[clone.reyaTokenRouter]
+source = "<%= settings.tokensRouterPackage %>"
+target = "<%= settings.tokensRouterPackage %>"
+depends = ["var.cannonClonePackages"]

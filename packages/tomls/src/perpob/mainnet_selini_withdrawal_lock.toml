@@ -1,0 +1,13 @@
+# Selini's accounts share this owner on mainnet (margin accounts 136174-136179 and spot account
+# 10000113130). This locks sUSDe withdrawals across all of the owner's accounts, not a ring-fenced
+# loan amount. Trading/auto-exchange losses and conversion proceeds remain outside this guard.
+[invoke.core_lock_selini_susde]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setWithdrawalLock"
+args = [
+    "0x2329583cc6fFF0C3fac4Eaa853e69e4C8B3189e5",
+    "<%= contracts.SUSDEProxy.address %>",
+    true,
+]
+depends = ["invoke.upgrade_core_proxy", "invoke.core_deny_account_transfer"]

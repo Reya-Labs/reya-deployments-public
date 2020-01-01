@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_11uni_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market11UniId %>",
+    { riskMatrixIndex = "<%= settings.market11Uni_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market11Uni_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market11Uni_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market11Uni_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market11Uni_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market11Uni_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market11Uni_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market11Uni_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market11Uni_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market11Uni_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market11Uni_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market11Uni_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market11Uni_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market11Uni_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market11Uni_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market11Uni_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market11Uni_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market11Uni_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market11Uni_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market11Uni_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market11Uni_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market11Uni_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_11uni",
+    "invoke.passive_perp_market_config_system_owner",
+]

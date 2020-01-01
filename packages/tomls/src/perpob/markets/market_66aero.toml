@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_66aero_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market66AeroId %>",
+    { riskMatrixIndex = "<%= settings.market66Aero_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market66Aero_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market66Aero_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market66Aero_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market66Aero_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market66Aero_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market66Aero_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market66Aero_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market66Aero_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market66Aero_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market66Aero_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market66Aero_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market66Aero_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market66Aero_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market66Aero_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market66Aero_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market66Aero_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market66Aero_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market66Aero_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market66Aero_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market66Aero_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market66Aero_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_66aero",
+    "invoke.passive_perp_market_config_system_owner",
+]

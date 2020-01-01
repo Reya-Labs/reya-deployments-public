@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_64morpho_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market64MorphoId %>",
+    { riskMatrixIndex = "<%= settings.market64Morpho_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market64Morpho_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market64Morpho_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market64Morpho_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market64Morpho_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market64Morpho_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market64Morpho_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market64Morpho_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market64Morpho_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market64Morpho_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market64Morpho_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market64Morpho_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market64Morpho_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market64Morpho_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market64Morpho_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market64Morpho_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market64Morpho_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market64Morpho_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market64Morpho_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market64Morpho_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market64Morpho_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market64Morpho_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_64morpho",
+    "invoke.passive_perp_market_config_system_owner",
+]

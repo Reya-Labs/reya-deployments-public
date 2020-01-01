@@ -1,0 +1,40 @@
+# Shared receipt economics. Maker caps are receipt-token quantities, not dollars.
+# One receipt is a 1:1 claim on one sUSDe, so a cap is equivalently an sUSDe
+# quantity. The numbers below are the allocations agreed in LT-39 valued at an
+# sUSDe price of 1 rUSD, and leave headroom above that so appreciation alone
+# never breaches CP1 admission.
+#
+# The receipts carry no feed of their own: they are valued by the shared
+# sUSDe/USDC oracle node that sUSDe collateral already uses. Impairment is an
+# explicit owner re-point to a receipt-specific LM node (see the runbook in
+# README.md), not a deployment-graph step.
+
+# Maximum receipt quantity admitted to CP1 (18 decimals).
+[setting.rkeyrockCap]
+defaultValue = "500000"
+
+[var.rkeyrock_receipt_defaults]
+rkeyrockTokenDecimals = "18"
+rkeyrockWithdrawalWindowSize = "<%= settings.ONE_DAY_IN_SECONDS %>"
+rkeyrockWithdrawalLimit = "0"
+rkeyrockAutoExchangeThreshold = "0"
+rkeyrockAutoExchangeInsuranceFee = "0.005"
+rkeyrockAutoExchangeDustThreshold = "0"
+rkeyrockBidSubmissionFee = "0"
+rkeyrockPriceHaircut = "0.075"
+rkeyrockAutoExchangeDiscount = "0.005"
+
+# Maximum receipt quantity admitted to CP1 (18 decimals).
+[setting.rflowCap]
+defaultValue = "2000000"
+
+[var.rflow_receipt_defaults]
+rflowTokenDecimals = "18"
+rflowWithdrawalWindowSize = "<%= settings.ONE_DAY_IN_SECONDS %>"
+rflowWithdrawalLimit = "0"
+rflowAutoExchangeThreshold = "0"
+rflowAutoExchangeInsuranceFee = "0.005"
+rflowAutoExchangeDustThreshold = "0"
+rflowBidSubmissionFee = "0"
+rflowPriceHaircut = "0.075"
+rflowAutoExchangeDiscount = "0.005"

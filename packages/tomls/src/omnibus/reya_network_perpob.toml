@@ -1,0 +1,2 @@
+# Compatibility entrypoint: rehearse the real production omnibus upgrade.
+include = ["reya_network.toml"]

@@ -1,0 +1,3 @@
+# Fork only. The standard omnibus builds the production economics and reads the
+# live Cronos receipt tokens at their pinned addresses; no fixture is layered on.
+include = ["../src/omnibus/reya_devnet.toml"]

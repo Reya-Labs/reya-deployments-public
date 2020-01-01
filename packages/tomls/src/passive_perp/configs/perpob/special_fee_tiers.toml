@@ -1,0 +1,19 @@
+[invoke.passive_perp_set_tier100_parameters]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeeTierParameters"
+args = [
+    "100",
+    { takerFee = "<%= parseEther(settings.takerFeeTier100Unscaled) %>", makerFee_DEPRECATED = "<%= parseEther(settings.makerFeeTier100Unscaled) %>", makerRebate_DEPRECATED = "0" },
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]
+
+[invoke.passive_perp_set_tier101_parameters]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeeTierParameters"
+args = [
+    "101",
+    { takerFee = "<%= parseEther(settings.takerFeeTier101Unscaled) %>", makerFee_DEPRECATED = "<%= parseEther(settings.makerFeeTier101Unscaled) %>", makerRebate_DEPRECATED = "0" },
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]

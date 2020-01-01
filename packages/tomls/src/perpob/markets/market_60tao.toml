@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_60tao_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market60TaoId %>",
+    { riskMatrixIndex = "<%= settings.market60Tao_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market60Tao_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market60Tao_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market60Tao_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market60Tao_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market60Tao_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market60Tao_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market60Tao_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market60Tao_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market60Tao_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market60Tao_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market60Tao_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market60Tao_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market60Tao_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market60Tao_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market60Tao_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market60Tao_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market60Tao_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market60Tao_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market60Tao_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market60Tao_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market60Tao_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_60tao",
+    "invoke.passive_perp_market_config_system_owner",
+]

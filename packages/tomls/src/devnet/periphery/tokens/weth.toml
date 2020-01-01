@@ -1,0 +1,108 @@
+###############################################################################
+# Periphery WETH Token Config (Devnet)
+#
+# Reuses the Cronos WETH proxy (not deployed fresh). References the token
+# address via settings.wethProxyAddress instead of contracts.WETHProxy.address.
+# Configures the Ethereum Sepolia and Arbitrum Sepolia connectors: the two
+# wallet networks the testnet UI offers for deposits and withdrawals.
+###############################################################################
+
+#####################################
+# Controller
+#####################################
+[invoke.periphery_set_wethController]
+target = ["PeripheryProxy"]
+fromCall.func = "owner"
+func = "setTokenController"
+args = ["<%= settings.wethProxyAddress %>", "<%= settings.wethController %>"]
+depends = ["invoke.upgrade_periphery_proxy"]
+
+#####################################
+# Execution Helper
+#####################################
+[invoke.periphery_set_wethExecutionHelper]
+target = ["PeripheryProxy"]
+fromCall.func = "owner"
+func = "setTokenExecutionHelper"
+args = [
+    "<%= settings.wethProxyAddress %>",
+    "<%= settings.wethExecutionHelper %>",
+]
+depends = ["invoke.upgrade_periphery_proxy"]
+
+#####################################
+# Connectors
+#####################################
+[invoke.periphery_set_wethEthereumSepoliaConnector]
+target = ["PeripheryProxy"]
+fromCall.func = "owner"
+func = "setTokenChainConnector"
+args = [
+    "<%= settings.wethProxyAddress %>",
+    "<%= settings.ethereumSepoliaChainId %>",
+    "<%= settings.wethEthereumSepoliaConnector %>",
+]
+depends = ["invoke.upgrade_periphery_proxy"]
+
+[invoke.periphery_set_wethArbitrumSepoliaConnector]
+target = ["PeripheryProxy"]
+fromCall.func = "owner"
+func = "setTokenChainConnector"
+args = [
+    "<%= settings.wethProxyAddress %>",
+    "<%= settings.arbitrumSepoliaChainId %>",
+    "<%= settings.wethArbitrumSepoliaConnector %>",
+]
+depends = ["invoke.upgrade_periphery_proxy"]
+
+#####################################
+# Static Withdraw Fees
+#####################################
+[invoke.periphery_set_weth_ethereum_sepolia_withdraw_fee]
+target = ["PeripheryProxy"]
+fromCall.func = "owner"
+func = "setTokenStaticWithdrawFee"
+args = [
+    "<%= settings.wethProxyAddress %>",
+    "<%= settings.wethEthereumSepoliaConnector %>",
+    "<%= parseUnits(settings.wethEthereumSepoliaWithdrawFeeUnscaled, parseInt(settings.wethTokenDecimals)) %>",
+]
+depends = ["invoke.upgrade_periphery_proxy"]
+
+[invoke.periphery_set_weth_arbitrum_sepolia_withdraw_fee]
+target = ["PeripheryProxy"]
+fromCall.func = "owner"
+func = "setTokenStaticWithdrawFee"
+args = [
+    "<%= settings.wethProxyAddress %>",
+    "<%= settings.wethArbitrumSepoliaConnector %>",
+    "<%= parseUnits(settings.wethArbitrumSepoliaWithdrawFeeUnscaled, parseInt(settings.wethTokenDecimals)) %>",
+]
+depends = ["invoke.upgrade_periphery_proxy"]
+
+# One-off re-emission (RET-133) of periphery_set_weth_ethereum_sepolia_withdraw_fee
+# with the same value. That step was executed on 1 May 2026 by a router that
+# only emitted the legacy FeeUpdated, so the FeeUpdatedV2 sequence counter
+# never advanced and the off-chain fast indexer (which sinks FeeUpdatedV2 into
+# socket_withdraw_fees, the table the API serves withdraw fees from) cannot see
+# this pair. Cannon never re-runs an executed step whose inputs are unchanged,
+# so the identical call is issued once more under a new step name. Keep the
+# step: removing it would not undo anything, and a fresh deployment simply
+# emits the pair twice. Ordering against the indexer does not matter: the
+# feed bootstraps from the chain's pinned start block whenever its table is
+# empty and replays to head, so events emitted before it is deployed are
+# picked up by that replay (no backfill), and events emitted after it is
+# deployed arrive over the live subscription.
+[invoke.periphery_reemit_weth_ethereum_sepolia_withdraw_fee]
+target = ["PeripheryProxy"]
+fromCall.func = "owner"
+func = "setTokenStaticWithdrawFee"
+args = [
+    "<%= settings.wethProxyAddress %>",
+    "<%= settings.wethEthereumSepoliaConnector %>",
+    "<%= parseUnits(settings.wethEthereumSepoliaWithdrawFeeUnscaled, parseInt(settings.wethTokenDecimals)) %>",
+]
+depends = [
+    "invoke.upgrade_periphery_proxy",
+    "invoke.periphery_set_weth_ethereum_sepolia_withdraw_fee",
+]
