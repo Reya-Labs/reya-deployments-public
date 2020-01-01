@@ -1,0 +1,145 @@
+# The token owner also receives subscription proceeds.
+[setting.rkeyrockCustodian1]
+defaultValue = "<%= settings.owner %>"
+
+[var.rkeyrock_vars]
+rkeyrockTokenName = "Reya Keyrock LM"
+rkeyrockTokenSymbol = "rKeyrock"
+
+[clone.rkeyrock]
+source = "<%= settings.shareTokensProxyPackage %>"
+target = "reya-share-tokens:1.0.0@rkeyrock"
+options.owner = "<%= settings.owner %>"
+options.salt = "<%= settings.rkeyrockSalt %>"
+depends = ["var.initial_proxy_vars", "var.cannonClonePackages"]
+
+# Upgrades implementation of InitialProxy to point to the new
+# router implementation.
+[invoke.upgrade_rkeyrock_proxy]
+target = ["rkeyrock.InitialProxy"]
+fromCall.func = "owner"
+func = "upgradeTo"
+args = [
+    "<%= imports.reyaShareTokenRouter.contracts.ShareTokenRouter.address %>",
+]
+factory.RKEYROCKProxy.abiOf = ["reyaShareTokenRouter.ShareTokenRouter"]
+factory.RKEYROCKProxy.event = "Upgraded"
+factory.RKEYROCKProxy.arg = 0
+depends = ["clone.rkeyrock", "clone.reyaShareTokenRouter"]
+
+[invoke.rkeyrock_initialize]
+target = ["RKEYROCKProxy"]
+fromCall.func = "owner"
+func = "initialize"
+args = [
+    "<%= settings.rkeyrockTokenName %>",
+    "<%= settings.rkeyrockTokenSymbol %>",
+    "<%= settings.rkeyrockTokenDecimals %>",
+]
+depends = ["invoke.upgrade_rkeyrock_proxy"]
+
+[invoke.rkeyrock_set_pausers]
+target = ["RKEYROCKProxy"]
+fromCall.func = "owner"
+func = "setDeniers"
+args = [
+    "<%= keccak256(hexlify('global')) %>",
+    [
+        "<%= settings.pauser1 %>",
+        "<%= settings.pauser2 %>",
+        "<%= settings.pauser3 %>",
+        "<%= settings.pauser4 %>",
+    ],
+]
+depends = ["invoke.rkeyrock_initialize"]
+
+[invoke.rkeyrock_global_config]
+target = ["RKEYROCKProxy"]
+fromCall.func = "owner"
+func = "setGlobalConfiguration"
+args = [{ coreProxy = "<%= contracts.CoreProxy.address %>" }]
+depends = ["invoke.rkeyrock_initialize"]
+
+[invoke.rkeyrock_enable_minter1]
+target = ["RKEYROCKProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = ["<%= keccak256(hexlify('mint')) %>", "<%= settings.rkeyrockMinter1 %>"]
+depends = ["invoke.rkeyrock_initialize"]
+
+[invoke.rkeyrock_enable_subscriber]
+target = ["RKEYROCKProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('subscription')) %>",
+    "<%= settings.rkeyrockSubscriber1 %>",
+]
+depends = ["invoke.rkeyrock_initialize"]
+
+[invoke.rkeyrock_enable_redeemer]
+target = ["RKEYROCKProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('redemption')) %>",
+    "<%= settings.rkeyrockRedeemer1 %>",
+]
+depends = ["invoke.rkeyrock_initialize"]
+
+[invoke.rkeyrock_enable_custodian]
+target = ["RKEYROCKProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('whitelistedCustodians')) %>",
+    "<%= getAddress(settings.rkeyrockCustodian1) %>",
+]
+depends = ["invoke.rkeyrock_initialize"]
+
+[invoke.rkeyrock_enable_underlying_token]
+target = ["RKEYROCKProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('whitelistedTokens')) %>",
+    "<%= settings.rUSDProxy %>",
+]
+depends = ["invoke.rkeyrock_initialize"]
+
+# The receipt is a 1:1 claim on one sUSDe, so repaid sUSDe can retire it directly.
+# Depending on the rUSD step keeps rUSD first in the allowlist.
+[invoke.rkeyrock_enable_underlying_susde]
+target = ["RKEYROCKProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('whitelistedTokens')) %>",
+    "<%= settings.receiptSettlementSusde %>",
+]
+depends = [
+    "invoke.rkeyrock_enable_underlying_token",
+    "var.receipt_settlement_assets",
+]
+
+# Expose the fully configured token only after settlement allowlists, registration and pool admission.
+[invoke.rkeyrock_unpause]
+target = ["RKEYROCKProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagAllowAll"
+args = ["<%= keccak256(hexlify('global')) %>", true]
+depends = [
+    "invoke.rkeyrock_initialize",
+    "invoke.rkeyrock_global_config",
+    "invoke.rkeyrock_set_pausers",
+    "invoke.rkeyrock_enable_minter1",
+    "invoke.rkeyrock_enable_subscriber",
+    "invoke.rkeyrock_enable_redeemer",
+    "invoke.rkeyrock_enable_custodian",
+    "invoke.rkeyrock_enable_underlying_token",
+    "invoke.rkeyrock_enable_underlying_susde",
+    "invoke.cp_1rusd_set_rkeyrock_config",
+    "invoke.passive_pool_allow_rkeyrock_for_auto_rebalance",
+    "invoke.rkeyrock_auto_exchange_access",
+    "invoke.rkeyrock_rusd_configure_spot_market",
+]

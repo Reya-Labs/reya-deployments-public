@@ -1,0 +1,16 @@
+# Deferred fragment for PRO-1136, excluded from the mainnet cutover graph.
+# After native acceptance, incorporate this inventory into a separate proposal
+# against the actually published omnibus; reconcile roles and simulate before execution.
+include = ["../retire_amm_permissions.toml"]
+
+# The August rotation installed an additional AMM volatility configurator.
+[invoke.retire_amm_rotated_market_vol_configurator]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "revokeConfigurationPermission"
+args = [
+    "<%= settings.cp1RusdId %>",
+    "<%= keccak256(hexlify('CP_PP_MARKET_VOLATILITY_CONFIGURATOR')) %>",
+    "<%= settings.d06082025_marketVolConfigurator1 %>",
+]
+depends = ["invoke.upgrade_core_proxy"]

@@ -1,0 +1,14 @@
+# NOT included by the mainnet graph. Restore via a follow-up release only after
+# batch one is executed, read back and published as the completed upgrade baseline.
+# Keep the batch-one includes and action names; also raise CP1 maxMarkets to 87.
+include = [
+    "settings.toml",
+    "stork_usdc_direct.toml",
+    "../markets/market_82nvda.toml",
+    "../markets/market_83meta.toml",
+    "../markets/market_84tsla.toml",
+    "../markets/market_85spy.toml",
+    "../markets/market_86qqq.toml",
+    "../markets/market_87wti.toml",
+    "risk_matrix.toml",
+]

@@ -1,0 +1,286 @@
+# Pair registration is required by Core auto-exchange event emission even when
+# ordinary spot trading is closed. Mirror mainnet pairs for the nine collaterals
+# missing from devnet; preserve the existing WETH and native sRUSD registrations.
+# Only WBTC receives trading configuration and the spot trading feature flag.
+# New raw IDs are captured from events, never copied from mainnet.
+
+[var.devnet_collateral_spot_event_abi]
+devnetCollateralSpotMarketAbi = "<%= JSON.stringify(contracts.CoreProxy.abi.concat({'type':'event','name':'SpotMarketInfoUpdated','inputs':[{'name':'eventSequenceNumber','type':'uint128','indexed':true,'internalType':'uint128'},{'name':'spotMarketId','type':'uint128','indexed':true,'internalType':'uint128'},{'name':'baseToken','type':'address','indexed':false,'internalType':'address'},{'name':'quoteToken','type':'address','indexed':false,'internalType':'address'},{'name':'symbol','type':'string','indexed':false,'internalType':'string'},{'name':'config','type':'tuple','indexed':false,'internalType':'struct SpotMarketConfig','components':[{'name':'oracleDeviation','type':'uint256','internalType':'UD60x18'},{'name':'minimumOrderBase','type':'uint256','internalType':'UD60x18'},{'name':'baseSpacing','type':'uint256','internalType':'UD60x18'},{'name':'priceSpacing','type':'uint256','internalType':'UD60x18'},{'name':'oracleNodeId','type':'bytes32','internalType':'bytes32'}]},{'name':'blockTimestamp','type':'uint256','indexed':false,'internalType':'uint256'}],'anonymous':false})) %>"
+
+[var.devnet_wbtc_spot_config]
+wbtcRusdSpot_oracleDeviationUnscaled = "0.05"
+wbtcRusdSpot_minimumOrderBaseUnscaled = "0.0001"
+wbtcRusdSpot_baseSpacingUnscaled = "0.0001"
+wbtcRusdSpot_priceSpacingUnscaled = "0.01"
+wbtcRusdSpot_oracleNodeId = "<%= settings.wbtcUsdcNodeIdStork %>"
+
+[invoke.mirror_wbtc_rusd_create_spot_market]
+target = ["CoreProxy"]
+abi = "<%= settings.devnetCollateralSpotMarketAbi %>"
+fromCall.func = "owner"
+func = "createSpotMarket"
+args = [
+    "<%= settings.wbtcProxyAddress %>",
+    "<%= settings.rusdProxyAddress %>",
+    "WBTCRUSD",
+]
+var.wbtcRusdSpotMarketId.event = "SpotMarketInfoUpdated"
+var.wbtcRusdSpotMarketId.arg = 1
+# Serial creation makes rehearsal IDs deterministic; consumers must still use readback.
+depends = [
+    "invoke.wbtc_global_collateral_config",
+    "invoke.rusd_global_collateral_config",
+    "invoke.f_srusd_rusd_create_spot_market",
+]
+
+[invoke.mirror_wbtc_rusd_configure_spot_market]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setSpotMarketConfiguration"
+args = [
+    "<%= settings.wbtcRusdSpotMarketId %>",
+    { oracleDeviation = "<%= parseEther(settings.wbtcRusdSpot_oracleDeviationUnscaled) %>", minimumOrderBase = "<%= parseEther(settings.wbtcRusdSpot_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.wbtcRusdSpot_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.wbtcRusdSpot_priceSpacingUnscaled) %>", oracleNodeId = "<%= settings.wbtcRusdSpot_oracleNodeId %>" },
+]
+depends = ["invoke.mirror_wbtc_rusd_create_spot_market"]
+
+[invoke.mirror_wsteth_rusd_create_spot_market]
+target = ["CoreProxy"]
+abi = "<%= settings.devnetCollateralSpotMarketAbi %>"
+fromCall.func = "owner"
+func = "createSpotMarket"
+args = [
+    "<%= settings.wstethProxyAddress %>",
+    "<%= settings.rusdProxyAddress %>",
+    "WSTETHRUSD",
+]
+var.wstethRusdSpotMarketId.event = "SpotMarketInfoUpdated"
+var.wstethRusdSpotMarketId.arg = 1
+# Serial creation makes rehearsal IDs deterministic; consumers must still use readback.
+depends = [
+    "invoke.wsteth_global_collateral_config",
+    "invoke.rusd_global_collateral_config",
+    "invoke.mirror_wbtc_rusd_create_spot_market",
+]
+
+[invoke.mirror_wsteth_rusd_configure_spot_market]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setSpotMarketConfiguration"
+args = [
+    "<%= settings.wstethRusdSpotMarketId %>",
+    { oracleDeviation = "0", minimumOrderBase = "0", baseSpacing = "0", priceSpacing = "0", oracleNodeId = "0x0000000000000000000000000000000000000000000000000000000000000000" },
+]
+depends = ["invoke.mirror_wsteth_rusd_create_spot_market"]
+
+[invoke.mirror_susde_rusd_create_spot_market]
+target = ["CoreProxy"]
+abi = "<%= settings.devnetCollateralSpotMarketAbi %>"
+fromCall.func = "owner"
+func = "createSpotMarket"
+args = [
+    "<%= settings.susdeProxyAddress %>",
+    "<%= settings.rusdProxyAddress %>",
+    "SUSDERUSD",
+]
+var.susdeRusdSpotMarketId.event = "SpotMarketInfoUpdated"
+var.susdeRusdSpotMarketId.arg = 1
+# Serial creation makes rehearsal IDs deterministic; consumers must still use readback.
+depends = [
+    "invoke.susde_global_collateral_config",
+    "invoke.rusd_global_collateral_config",
+    "invoke.mirror_wsteth_rusd_create_spot_market",
+]
+
+[invoke.mirror_susde_rusd_configure_spot_market]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setSpotMarketConfiguration"
+args = [
+    "<%= settings.susdeRusdSpotMarketId %>",
+    { oracleDeviation = "0", minimumOrderBase = "0", baseSpacing = "0", priceSpacing = "0", oracleNodeId = "0x0000000000000000000000000000000000000000000000000000000000000000" },
+]
+depends = ["invoke.mirror_susde_rusd_create_spot_market"]
+
+[invoke.mirror_usde_rusd_create_spot_market]
+target = ["CoreProxy"]
+abi = "<%= settings.devnetCollateralSpotMarketAbi %>"
+fromCall.func = "owner"
+func = "createSpotMarket"
+args = [
+    "<%= settings.usdeProxyAddress %>",
+    "<%= settings.rusdProxyAddress %>",
+    "USDERUSD",
+]
+var.usdeRusdSpotMarketId.event = "SpotMarketInfoUpdated"
+var.usdeRusdSpotMarketId.arg = 1
+# Serial creation makes rehearsal IDs deterministic; consumers must still use readback.
+depends = [
+    "invoke.usde_global_collateral_config",
+    "invoke.rusd_global_collateral_config",
+    "invoke.mirror_susde_rusd_create_spot_market",
+]
+
+[invoke.mirror_usde_rusd_configure_spot_market]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setSpotMarketConfiguration"
+args = [
+    "<%= settings.usdeRusdSpotMarketId %>",
+    { oracleDeviation = "0", minimumOrderBase = "0", baseSpacing = "0", priceSpacing = "<%= parseEther('0.001') %>", oracleNodeId = "0x0000000000000000000000000000000000000000000000000000000000000000" },
+]
+depends = ["invoke.mirror_usde_rusd_create_spot_market"]
+
+[invoke.mirror_deusd_rusd_create_spot_market]
+target = ["CoreProxy"]
+abi = "<%= settings.devnetCollateralSpotMarketAbi %>"
+fromCall.func = "owner"
+func = "createSpotMarket"
+args = [
+    "<%= settings.deusdProxyAddress %>",
+    "<%= settings.rusdProxyAddress %>",
+    "DEUSDRUSD",
+]
+var.deusdRusdSpotMarketId.event = "SpotMarketInfoUpdated"
+var.deusdRusdSpotMarketId.arg = 1
+# Serial creation makes rehearsal IDs deterministic; consumers must still use readback.
+depends = [
+    "invoke.deusd_global_collateral_config",
+    "invoke.rusd_global_collateral_config",
+    "invoke.mirror_usde_rusd_create_spot_market",
+]
+
+[invoke.mirror_deusd_rusd_configure_spot_market]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setSpotMarketConfiguration"
+args = [
+    "<%= settings.deusdRusdSpotMarketId %>",
+    { oracleDeviation = "0", minimumOrderBase = "0", baseSpacing = "0", priceSpacing = "0", oracleNodeId = "0x0000000000000000000000000000000000000000000000000000000000000000" },
+]
+depends = ["invoke.mirror_deusd_rusd_create_spot_market"]
+
+[invoke.mirror_sdeusd_rusd_create_spot_market]
+target = ["CoreProxy"]
+abi = "<%= settings.devnetCollateralSpotMarketAbi %>"
+fromCall.func = "owner"
+func = "createSpotMarket"
+args = [
+    "<%= settings.sdeusdProxyAddress %>",
+    "<%= settings.rusdProxyAddress %>",
+    "SDEUSDRUSD",
+]
+var.sdeusdRusdSpotMarketId.event = "SpotMarketInfoUpdated"
+var.sdeusdRusdSpotMarketId.arg = 1
+# Serial creation makes rehearsal IDs deterministic; consumers must still use readback.
+depends = [
+    "invoke.sdeusd_global_collateral_config",
+    "invoke.rusd_global_collateral_config",
+    "invoke.mirror_deusd_rusd_create_spot_market",
+]
+
+[invoke.mirror_sdeusd_rusd_configure_spot_market]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setSpotMarketConfiguration"
+args = [
+    "<%= settings.sdeusdRusdSpotMarketId %>",
+    { oracleDeviation = "0", minimumOrderBase = "0", baseSpacing = "0", priceSpacing = "0", oracleNodeId = "0x0000000000000000000000000000000000000000000000000000000000000000" },
+]
+depends = ["invoke.mirror_sdeusd_rusd_create_spot_market"]
+
+[invoke.mirror_ramber_rusd_create_spot_market]
+target = ["CoreProxy"]
+abi = "<%= settings.devnetCollateralSpotMarketAbi %>"
+fromCall.func = "owner"
+func = "createSpotMarket"
+args = [
+    "<%= settings.ramberProxyAddress %>",
+    "<%= settings.rusdProxyAddress %>",
+    "RAMBERRUSD",
+]
+var.ramberRusdSpotMarketId.event = "SpotMarketInfoUpdated"
+var.ramberRusdSpotMarketId.arg = 1
+# Serial creation makes rehearsal IDs deterministic; consumers must still use readback.
+depends = [
+    "invoke.ramber_global_collateral_config",
+    "invoke.rusd_global_collateral_config",
+    "invoke.mirror_sdeusd_rusd_create_spot_market",
+]
+
+[invoke.mirror_ramber_rusd_configure_spot_market]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setSpotMarketConfiguration"
+args = [
+    "<%= settings.ramberRusdSpotMarketId %>",
+    { oracleDeviation = "0", minimumOrderBase = "0", baseSpacing = "0", priceSpacing = "0", oracleNodeId = "0x0000000000000000000000000000000000000000000000000000000000000000" },
+]
+depends = ["invoke.mirror_ramber_rusd_create_spot_market"]
+
+[invoke.mirror_rselini_rusd_create_spot_market]
+target = ["CoreProxy"]
+abi = "<%= settings.devnetCollateralSpotMarketAbi %>"
+fromCall.func = "owner"
+func = "createSpotMarket"
+args = [
+    "<%= settings.rseliniProxyAddress %>",
+    "<%= settings.rusdProxyAddress %>",
+    "RSELINIRUSD",
+]
+var.rseliniRusdSpotMarketId.event = "SpotMarketInfoUpdated"
+var.rseliniRusdSpotMarketId.arg = 1
+# Serial creation makes rehearsal IDs deterministic; consumers must still use readback.
+depends = [
+    "invoke.rselini_global_collateral_config",
+    "invoke.rusd_global_collateral_config",
+    "invoke.mirror_ramber_rusd_create_spot_market",
+]
+
+[invoke.mirror_rselini_rusd_configure_spot_market]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setSpotMarketConfiguration"
+args = [
+    "<%= settings.rseliniRusdSpotMarketId %>",
+    { oracleDeviation = "0", minimumOrderBase = "0", baseSpacing = "0", priceSpacing = "0", oracleNodeId = "0x0000000000000000000000000000000000000000000000000000000000000000" },
+]
+depends = ["invoke.mirror_rselini_rusd_create_spot_market"]
+
+[invoke.mirror_rhedge_rusd_create_spot_market]
+target = ["CoreProxy"]
+abi = "<%= settings.devnetCollateralSpotMarketAbi %>"
+fromCall.func = "owner"
+func = "createSpotMarket"
+args = [
+    "<%= settings.rhedgeProxyAddress %>",
+    "<%= settings.rusdProxyAddress %>",
+    "RHEDGERUSD",
+]
+var.rhedgeRusdSpotMarketId.event = "SpotMarketInfoUpdated"
+var.rhedgeRusdSpotMarketId.arg = 1
+# Serial creation makes rehearsal IDs deterministic; consumers must still use readback.
+depends = [
+    "invoke.rhedge_global_collateral_config",
+    "invoke.rusd_global_collateral_config",
+    "invoke.mirror_rselini_rusd_create_spot_market",
+]
+
+[invoke.mirror_rhedge_rusd_configure_spot_market]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setSpotMarketConfiguration"
+args = [
+    "<%= settings.rhedgeRusdSpotMarketId %>",
+    { oracleDeviation = "0", minimumOrderBase = "0", baseSpacing = "0", priceSpacing = "0", oracleNodeId = "0x0000000000000000000000000000000000000000000000000000000000000000" },
+]
+depends = ["invoke.mirror_rhedge_rusd_create_spot_market"]
+
+[invoke.mirror_wbtc_rusd_enable_spot_market]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagAllowAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('spotMarketEnabled')), settings.wbtcRusdSpotMarketId])) %>",
+    true,
+]
+depends = ["invoke.mirror_wbtc_rusd_configure_spot_market"]

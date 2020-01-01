@@ -1,0 +1,14 @@
+# Keyrock accounts 18055 and 18057 share this owner on mainnet. This locks sUSDe
+# withdrawals across all of the owner's accounts, not a ring-fenced loan amount.
+# Trading/auto-exchange losses and conversion proceeds remain outside this guard;
+# PRO-1138 tracks production verification and the remaining loan-protection work.
+[invoke.core_lock_keyrock_susde]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setWithdrawalLock"
+args = [
+    "0xE3724710A787c3d854bc3D23873D75eABBA7b39B",
+    "<%= contracts.SUSDEProxy.address %>",
+    true,
+]
+depends = ["invoke.upgrade_core_proxy", "invoke.core_deny_account_transfer"]

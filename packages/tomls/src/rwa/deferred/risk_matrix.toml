@@ -1,0 +1,216 @@
+# Deferred markets 82-87. Include only after batch one is executed and published.
+[invoke.cp_1rusd_create_risk_matrix_market_82nvda]
+target = ["CoreProxy"]
+abi = "<%= JSON.stringify(contracts.CoreProxy.abi.concat({'type':'event','name':'RiskMatrixCreation','inputs':[{'name':'collateralPoolId','type':'uint128','indexed':true,'internalType':'uint128'},{'name':'riskBlockId','type':'uint256','indexed':true,'internalType':'uint256'},{'name':'riskMatrix','type':'int64[][]','indexed':false,'internalType':'SD1x18[][]'},{'name':'blockTimestamp','type':'uint256','indexed':false,'internalType':'uint256'}],'anonymous':false})) %>"
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.cp1RusdId %>"]
+func = "createRiskMatrix"
+var.cp1RusdMarket82NvdaRiskBlockId.event = "RiskMatrixCreation"
+var.cp1RusdMarket82NvdaRiskBlockId.arg = 1
+args = [
+    "<%= settings.cp1RusdId %>",
+    [
+        [
+            "<%= parseEther(settings.cp1Rusd_market82Nvda_riskMatrix00Unscaled) %>",
+        ],
+    ],
+]
+depends = [
+    "var.cp_1rusd_vars",
+    "invoke.market_82nvda_merge_collateral_pool",
+    "invoke.cp_1rusd_create_risk_matrix_market_81amzn",
+]
+
+[invoke.cp_1rusd_set_risk_block_id_market_82nvda]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setRiskBlockId"
+args = [
+    "<%= settings.market82NvdaId %>",
+    "<%= settings.cp1RusdMarket82NvdaRiskBlockId %>",
+    "<%= settings.market82Nvda_riskMatrixIndex %>",
+]
+depends = [
+    "invoke.cp_1rusd_create_risk_matrix_market_82nvda",
+    "invoke.passive_perp_risk_block_config_system_owner",
+]
+
+[invoke.cp_1rusd_create_risk_matrix_market_83meta]
+target = ["CoreProxy"]
+abi = "<%= JSON.stringify(contracts.CoreProxy.abi.concat({'type':'event','name':'RiskMatrixCreation','inputs':[{'name':'collateralPoolId','type':'uint128','indexed':true,'internalType':'uint128'},{'name':'riskBlockId','type':'uint256','indexed':true,'internalType':'uint256'},{'name':'riskMatrix','type':'int64[][]','indexed':false,'internalType':'SD1x18[][]'},{'name':'blockTimestamp','type':'uint256','indexed':false,'internalType':'uint256'}],'anonymous':false})) %>"
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.cp1RusdId %>"]
+func = "createRiskMatrix"
+var.cp1RusdMarket83MetaRiskBlockId.event = "RiskMatrixCreation"
+var.cp1RusdMarket83MetaRiskBlockId.arg = 1
+args = [
+    "<%= settings.cp1RusdId %>",
+    [
+        [
+            "<%= parseEther(settings.cp1Rusd_market83Meta_riskMatrix00Unscaled) %>",
+        ],
+    ],
+]
+depends = [
+    "var.cp_1rusd_vars",
+    "invoke.market_83meta_merge_collateral_pool",
+    "invoke.cp_1rusd_create_risk_matrix_market_82nvda",
+]
+
+[invoke.cp_1rusd_set_risk_block_id_market_83meta]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setRiskBlockId"
+args = [
+    "<%= settings.market83MetaId %>",
+    "<%= settings.cp1RusdMarket83MetaRiskBlockId %>",
+    "<%= settings.market83Meta_riskMatrixIndex %>",
+]
+depends = [
+    "invoke.cp_1rusd_create_risk_matrix_market_83meta",
+    "invoke.passive_perp_risk_block_config_system_owner",
+]
+
+[invoke.cp_1rusd_create_risk_matrix_market_84tsla]
+target = ["CoreProxy"]
+abi = "<%= JSON.stringify(contracts.CoreProxy.abi.concat({'type':'event','name':'RiskMatrixCreation','inputs':[{'name':'collateralPoolId','type':'uint128','indexed':true,'internalType':'uint128'},{'name':'riskBlockId','type':'uint256','indexed':true,'internalType':'uint256'},{'name':'riskMatrix','type':'int64[][]','indexed':false,'internalType':'SD1x18[][]'},{'name':'blockTimestamp','type':'uint256','indexed':false,'internalType':'uint256'}],'anonymous':false})) %>"
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.cp1RusdId %>"]
+func = "createRiskMatrix"
+var.cp1RusdMarket84TslaRiskBlockId.event = "RiskMatrixCreation"
+var.cp1RusdMarket84TslaRiskBlockId.arg = 1
+args = [
+    "<%= settings.cp1RusdId %>",
+    [
+        [
+            "<%= parseEther(settings.cp1Rusd_market84Tsla_riskMatrix00Unscaled) %>",
+        ],
+    ],
+]
+depends = [
+    "var.cp_1rusd_vars",
+    "invoke.market_84tsla_merge_collateral_pool",
+    "invoke.cp_1rusd_create_risk_matrix_market_83meta",
+]
+
+[invoke.cp_1rusd_set_risk_block_id_market_84tsla]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setRiskBlockId"
+args = [
+    "<%= settings.market84TslaId %>",
+    "<%= settings.cp1RusdMarket84TslaRiskBlockId %>",
+    "<%= settings.market84Tsla_riskMatrixIndex %>",
+]
+depends = [
+    "invoke.cp_1rusd_create_risk_matrix_market_84tsla",
+    "invoke.passive_perp_risk_block_config_system_owner",
+]
+
+[invoke.cp_1rusd_create_risk_matrix_market_85spy]
+target = ["CoreProxy"]
+abi = "<%= JSON.stringify(contracts.CoreProxy.abi.concat({'type':'event','name':'RiskMatrixCreation','inputs':[{'name':'collateralPoolId','type':'uint128','indexed':true,'internalType':'uint128'},{'name':'riskBlockId','type':'uint256','indexed':true,'internalType':'uint256'},{'name':'riskMatrix','type':'int64[][]','indexed':false,'internalType':'SD1x18[][]'},{'name':'blockTimestamp','type':'uint256','indexed':false,'internalType':'uint256'}],'anonymous':false})) %>"
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.cp1RusdId %>"]
+func = "createRiskMatrix"
+var.cp1RusdMarket85SpyRiskBlockId.event = "RiskMatrixCreation"
+var.cp1RusdMarket85SpyRiskBlockId.arg = 1
+args = [
+    "<%= settings.cp1RusdId %>",
+    [
+        [
+            "<%= parseEther(settings.cp1Rusd_market85Spy_riskMatrix00Unscaled) %>",
+        ],
+    ],
+]
+depends = [
+    "var.cp_1rusd_vars",
+    "invoke.market_85spy_merge_collateral_pool",
+    "invoke.cp_1rusd_create_risk_matrix_market_84tsla",
+]
+
+[invoke.cp_1rusd_set_risk_block_id_market_85spy]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setRiskBlockId"
+args = [
+    "<%= settings.market85SpyId %>",
+    "<%= settings.cp1RusdMarket85SpyRiskBlockId %>",
+    "<%= settings.market85Spy_riskMatrixIndex %>",
+]
+depends = [
+    "invoke.cp_1rusd_create_risk_matrix_market_85spy",
+    "invoke.passive_perp_risk_block_config_system_owner",
+]
+
+[invoke.cp_1rusd_create_risk_matrix_market_86qqq]
+target = ["CoreProxy"]
+abi = "<%= JSON.stringify(contracts.CoreProxy.abi.concat({'type':'event','name':'RiskMatrixCreation','inputs':[{'name':'collateralPoolId','type':'uint128','indexed':true,'internalType':'uint128'},{'name':'riskBlockId','type':'uint256','indexed':true,'internalType':'uint256'},{'name':'riskMatrix','type':'int64[][]','indexed':false,'internalType':'SD1x18[][]'},{'name':'blockTimestamp','type':'uint256','indexed':false,'internalType':'uint256'}],'anonymous':false})) %>"
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.cp1RusdId %>"]
+func = "createRiskMatrix"
+var.cp1RusdMarket86QqqRiskBlockId.event = "RiskMatrixCreation"
+var.cp1RusdMarket86QqqRiskBlockId.arg = 1
+args = [
+    "<%= settings.cp1RusdId %>",
+    [
+        [
+            "<%= parseEther(settings.cp1Rusd_market86Qqq_riskMatrix00Unscaled) %>",
+        ],
+    ],
+]
+depends = [
+    "var.cp_1rusd_vars",
+    "invoke.market_86qqq_merge_collateral_pool",
+    "invoke.cp_1rusd_create_risk_matrix_market_85spy",
+]
+
+[invoke.cp_1rusd_set_risk_block_id_market_86qqq]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setRiskBlockId"
+args = [
+    "<%= settings.market86QqqId %>",
+    "<%= settings.cp1RusdMarket86QqqRiskBlockId %>",
+    "<%= settings.market86Qqq_riskMatrixIndex %>",
+]
+depends = [
+    "invoke.cp_1rusd_create_risk_matrix_market_86qqq",
+    "invoke.passive_perp_risk_block_config_system_owner",
+]
+
+[invoke.cp_1rusd_create_risk_matrix_market_87wti]
+target = ["CoreProxy"]
+abi = "<%= JSON.stringify(contracts.CoreProxy.abi.concat({'type':'event','name':'RiskMatrixCreation','inputs':[{'name':'collateralPoolId','type':'uint128','indexed':true,'internalType':'uint128'},{'name':'riskBlockId','type':'uint256','indexed':true,'internalType':'uint256'},{'name':'riskMatrix','type':'int64[][]','indexed':false,'internalType':'SD1x18[][]'},{'name':'blockTimestamp','type':'uint256','indexed':false,'internalType':'uint256'}],'anonymous':false})) %>"
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.cp1RusdId %>"]
+func = "createRiskMatrix"
+var.cp1RusdMarket87WtiRiskBlockId.event = "RiskMatrixCreation"
+var.cp1RusdMarket87WtiRiskBlockId.arg = 1
+args = [
+    "<%= settings.cp1RusdId %>",
+    [
+        [
+            "<%= parseEther(settings.cp1Rusd_market87Wti_riskMatrix00Unscaled) %>",
+        ],
+    ],
+]
+depends = [
+    "var.cp_1rusd_vars",
+    "invoke.market_87wti_merge_collateral_pool",
+    "invoke.cp_1rusd_create_risk_matrix_market_86qqq",
+]
+
+[invoke.cp_1rusd_set_risk_block_id_market_87wti]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setRiskBlockId"
+args = [
+    "<%= settings.market87WtiId %>",
+    "<%= settings.cp1RusdMarket87WtiRiskBlockId %>",
+    "<%= settings.market87Wti_riskMatrixIndex %>",
+]
+depends = [
+    "invoke.cp_1rusd_create_risk_matrix_market_87wti",
+    "invoke.passive_perp_risk_block_config_system_owner",
+]

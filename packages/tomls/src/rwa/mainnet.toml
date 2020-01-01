@@ -1,0 +1,13 @@
+# Batch one: markets 76-81. See deferred/mainnet.toml and the release runbook.
+# Included only by reya_network, never the shared mainnet/Cronos collateral-pool graph.
+include = [
+    "settings.toml",
+    "stork_usdc_direct.toml",
+    "markets/market_76xau.toml",
+    "markets/market_77xag.toml",
+    "markets/market_78aapl.toml",
+    "markets/market_79msft.toml",
+    "markets/market_80googl.toml",
+    "markets/market_81amzn.toml",
+    "risk_matrix.toml",
+]

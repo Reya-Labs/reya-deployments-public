@@ -1,0 +1,12 @@
+include = [
+    "utils/upgrade_proxy.toml",
+    "configs/feature_flags.toml",
+    "configs/perpob/feature_flags.toml",
+    "../perpob/migration_market_controls.toml",
+    "configs/global_config.toml",
+    "configs/fees.toml",
+    "configs/tier_100_holders.toml",
+]
+
+# Legacy affiliate flags are inert on Fee V3; its appended custom-rate slots start
+# at zero. Do not seed the old affiliate list with new custom rates during upgrade.
