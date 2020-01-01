@@ -1,0 +1,5 @@
+include = [
+    "./mainnet.toml",
+    "utils/deploy_proxy.toml",
+    "configs/tokens/wsteth.toml",
+]
