@@ -1,0 +1,8 @@
+# Fork only: the standard omnibus, building the production economics.
+include = ["../src/omnibus/reya_cronos.toml"]
+
+# Disposable fork relay identities; never included by a deployment recipe.
+[setting.oraclePusher1]
+defaultValue = "0x0000000000000000000000000000000000001001"
+[setting.oraclePusher2]
+defaultValue = "0x0000000000000000000000000000000000001002"

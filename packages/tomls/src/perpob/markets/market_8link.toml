@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_8link_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market8LinkId %>",
+    { riskMatrixIndex = "<%= settings.market8Link_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market8Link_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market8Link_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market8Link_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market8Link_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market8Link_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market8Link_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market8Link_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market8Link_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market8Link_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market8Link_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market8Link_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market8Link_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market8Link_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market8Link_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market8Link_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market8Link_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market8Link_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market8Link_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market8Link_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market8Link_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market8Link_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_8link",
+    "invoke.passive_perp_market_config_system_owner",
+]

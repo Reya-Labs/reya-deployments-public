@@ -1,0 +1,29 @@
+{
+  "//": "Immutable router sources shared by mainnet, Cronos and devnet. Core 1.1.6 adds owner-only withdrawals and hard-disables account transfers (network #765, which folds in #761) on top of the 1.1.5 withdrawal locks; Periphery 1.1.3 checks the final withdrawal receiver. PassivePerp 1.1.4 resets referrals to V3. Core 1.1.6 and Periphery 1.1.3 are built from network 44117649d; the other routers are the completed devnet 1.1.10 artifacts. Final cutover still requires the approved release manifest.",
+  "chainId": 13370,
+  "packages": {
+    "reya-orders-gateway:1.1.4@router": {
+      "deploy": "QmS45cNvKNgRfiXbJt7BNsR6XncZmZJ5VGqGpPZEBxFdx3",
+      "misc": "QmWTPnVzi8JSfT6yujhDJ8jWXnav6P5PmaiptG6SLdurkr"
+    },
+    "reya-periphery:1.1.3@router": {
+      "deploy": "QmUvubAjnWamTihHVkC6HByirgpbttVVnd5y8yMMDTncRf",
+      "misc": "QmdZBwJgq95vLjx1vZkA1TjaR1nHS5HW1PB7EosbjWKZQS"
+    },
+    "reya-core:1.1.6@router": {
+      "deploy": "QmTNTPGJx5aKgQzxoeYFzvRo4T4KBDk7weYi3GwnEWFVhQ",
+      "misc": "QmP5DH6F9s6vmsb5bf5wfnzPrXysfxTzNnomsDW9YhkN23"
+    },
+    "reya-instrument-passive-perp:1.1.4@router": {
+      "deploy": "QmcHvAQuLb52H2B5j7wYbUauzSKWoepAsGqrD97RtozGnm",
+      "misc": "QmZvTaczTYLuSGFEZbrw38GePQ93CcegGxdSV852LRe47W"
+    }
+  },
+  "sourceCommits": {
+    "core": "44117649df2d4d29bec1ce15b808e6f9b603b4d7",
+    "passivePerp": "c05de623f929288ff639666b1c6525ab74d97b78",
+    "ordersGateway": "5eb104dbc05e76e33aa2ed12163b838dbba9d5c7",
+    "ordersGatewayBuild": "f30f2807c8445467ee924f70e7f54c43b8fdff29",
+    "periphery": "44117649df2d4d29bec1ce15b808e6f9b603b4d7"
+  }
+}

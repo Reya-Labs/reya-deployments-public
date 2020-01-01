@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_67kaito_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market67KaitoId %>",
+    { riskMatrixIndex = "<%= settings.market67Kaito_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market67Kaito_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market67Kaito_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market67Kaito_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market67Kaito_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market67Kaito_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market67Kaito_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market67Kaito_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market67Kaito_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market67Kaito_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market67Kaito_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market67Kaito_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market67Kaito_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market67Kaito_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market67Kaito_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market67Kaito_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market67Kaito_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market67Kaito_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market67Kaito_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market67Kaito_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market67Kaito_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market67Kaito_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_67kaito",
+    "invoke.passive_perp_market_config_system_owner",
+]

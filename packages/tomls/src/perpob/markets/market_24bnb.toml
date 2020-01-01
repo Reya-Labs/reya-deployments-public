@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_24bnb_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market24BnbId %>",
+    { riskMatrixIndex = "<%= settings.market24Bnb_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market24Bnb_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market24Bnb_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market24Bnb_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market24Bnb_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market24Bnb_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market24Bnb_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market24Bnb_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market24Bnb_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market24Bnb_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market24Bnb_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market24Bnb_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market24Bnb_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market24Bnb_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market24Bnb_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market24Bnb_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market24Bnb_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market24Bnb_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market24Bnb_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market24Bnb_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market24Bnb_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market24Bnb_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_24bnb",
+    "invoke.passive_perp_market_config_system_owner",
+]

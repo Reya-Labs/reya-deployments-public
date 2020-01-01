@@ -1,0 +1,12 @@
+[invoke.passive_perp_set_global_fee_parameters]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setGlobalFeeParameters"
+args = [
+    { ogRebateRate = "<%= parseEther(settings.ogDiscountUnscaled) %>", refereeRebateRate = "<%= parseEther(settings.refereeDiscountUnscaled) %>", referrerRebate = "<%= parseEther(settings.referrerRebateUnscaled) %>", affiliateReferrerRebate_DEPRECATED = "<%= parseEther(settings.affiliateReferrerRebateUnscaled) %>", vltzRebateRate = "<%= parseEther(settings.vltzDiscountUnscaled) %>", spreadDiscount_DEPRECATED = "<%= parseEther(settings.spreadDiscountUnscaled) %>", poolRebate = "<%= parseEther(settings.pool1RusdRebateUnscaled) %>", poolAccountId = "<%= settings.pool1RusdAccountId %>" },
+]
+depends = [
+    "invoke.upgrade_passive_perp_proxy",
+    "invoke.passive_perp_global_config",
+    "invoke.passive_pool_create_pool_1rusd",
+]

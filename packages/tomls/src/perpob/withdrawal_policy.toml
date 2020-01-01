@@ -1,0 +1,12 @@
+# Owner-only withdrawals. Core router 1.1.6 enforces the policy and Periphery router 1.1.3 checks the
+# final bridge receiver. The approval runs after both upgrades. On mainnet every owner call of a release
+# executes in one Safe transaction, so the three land together. Devnet and Cronos send owner calls from
+# the owner EOA one transaction at a time; until the approval lands, an owner who opts in loses the
+# Periphery routes (bridging and staking) but keeps direct withdrawals to their own wallet, and no route
+# can pay anyone else.
+[invoke.core_set_withdrawal_periphery]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setWithdrawalPeriphery"
+args = ["<%= settings.peripheryProxy %>"]
+depends = ["invoke.upgrade_core_proxy", "invoke.upgrade_periphery_proxy"]

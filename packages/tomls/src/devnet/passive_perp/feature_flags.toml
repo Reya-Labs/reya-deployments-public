@@ -1,0 +1,31 @@
+include = ["../../passive_perp/configs/perpob/feature_flags.toml"]
+
+# Devnet passive perp feature flags: unpause + pausers, owner config grants,
+# the tier-updater's dedicated fee-config signers, and the perpOB oracle push set.
+# Excludes: FTM market pause, the OG-status bot, prog comp exchange
+[invoke.passive_perp_unpause]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagAllowAll"
+args = ["<%= keccak256(hexlify('global')) %>", true]
+depends = ["invoke.upgrade_passive_perp_proxy"]
+
+[invoke.passive_perp_fee_config_set_tier_id_bot]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('configureFees')) %>",
+    "<%= settings.setTierIdBot %>",
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]
+
+[invoke.passive_perp_fee_config_set_referral_mapping_bot]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('configureFees')) %>",
+    "<%= settings.setReferralMappingBot %>",
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]

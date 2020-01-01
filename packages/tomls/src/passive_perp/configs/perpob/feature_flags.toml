@@ -1,0 +1,90 @@
+[invoke.passive_perp_set_pausers]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setDeniers"
+args = [
+    "<%= keccak256(hexlify('global')) %>",
+    [
+        "<%= settings.pauser1 %>",
+        "<%= settings.pauser2 %>",
+        "<%= settings.pauser3 %>",
+        "<%= settings.pauser4 %>",
+    ],
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]
+
+[invoke.passive_perp_fee_config_system_owner]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = ["<%= keccak256(hexlify('configureFees')) %>", "<%= settings.owner %>"]
+depends = ["invoke.upgrade_passive_perp_proxy"]
+
+[invoke.passive_perp_market_config_system_owner]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = ["<%= keccak256(hexlify('configureMarket')) %>", "<%= settings.owner %>"]
+depends = ["invoke.upgrade_passive_perp_proxy"]
+
+# Main's cutover prerequisite must also be applied to this historical fork.
+# The PerpOB router checks this flag before allowing market risk-block changes.
+[invoke.passive_perp_risk_block_config_system_owner]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('configureRiskBlock')) %>",
+    "<%= settings.owner %>",
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]
+
+[invoke.passive_perp_set_oracle_pusher1]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('oraclePushers')) %>",
+    "<%= settings.oraclePusher1 %>",
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]
+
+[invoke.passive_perp_set_oracle_pusher2]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('oraclePushers')) %>",
+    "<%= settings.oraclePusher2 %>",
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]
+
+[invoke.passive_perp_set_oracle_publisher_me]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('oraclePublishers')) %>",
+    "<%= settings.matching_engine_publisher1 %>",
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]
+
+[invoke.passive_perp_set_multicall_oracle_pusher1]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('multicall')) %>",
+    "<%= settings.oraclePusher1 %>",
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]
+
+[invoke.passive_perp_set_multicall_oracle_pusher2]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('multicall')) %>",
+    "<%= settings.oraclePusher2 %>",
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]
