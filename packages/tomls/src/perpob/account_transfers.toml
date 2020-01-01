@@ -1,0 +1,16 @@
+# Owner-scoped withdrawal locks require ownership to remain fixed (network #760).
+# From Core router 1.1.6 (network #765) account transfers always revert and this flag is no longer read.
+# The invokes stay so earlier releases replay unchanged; minting stays enabled.
+[invoke.core_disable_account_transfer]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagAllowAll"
+args = ["<%= keccak256(hexlify('notifyAccountTransfer')) %>", false]
+depends = ["invoke.upgrade_core_proxy"]
+
+[invoke.core_deny_account_transfer]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagDenyAll"
+args = ["<%= keccak256(hexlify('notifyAccountTransfer')) %>", true]
+depends = ["invoke.core_disable_account_transfer"]

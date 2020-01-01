@@ -1,0 +1,11 @@
+# Additive grant shared by the permission-only mainnet package and PerpOB fork.
+# The broadcaster relays signed fills; it is not a matching-engine publisher.
+[invoke.orders_gateway_enable_mainnet_me_broadcaster]
+target = ["0xfc8c96bE87Da63CeCddBf54abFA7B13ee8044739"]
+from = "0x1Fe50318e5E3165742eDC9c4a15d997bDB935Eb9"
+abi = '[{"type":"function","name":"addToFeatureFlagAllowlist","inputs":[{"name":"feature","type":"bytes32"},{"name":"account","type":"address"}],"outputs":[],"stateMutability":"nonpayable"}]'
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('conditional_orders')) %>",
+    "0x102C12833b27db585FBfCaf53B55bDBCD8432e2b",
+]

@@ -1,0 +1,4 @@
+name = "reya-omnibus"
+preset = "main"
+description = "Reya Omnibus"
+privateSourceCode = true

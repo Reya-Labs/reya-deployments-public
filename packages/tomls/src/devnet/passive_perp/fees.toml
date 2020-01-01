@@ -1,0 +1,6 @@
+# The same active fee-tier wiring as mainnet; environment values stay explicit.
+include = [
+    "../../passive_perp/configs/perpob/fees.toml",
+    "../../passive_perp/configs/perpob/launch_fee_tier_102.toml",
+    "../../passive_perp/configs/perpob/regular_fee_tiers_7_8.toml",
+]
