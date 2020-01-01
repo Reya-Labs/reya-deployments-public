@@ -1,0 +1,156 @@
+# Devnet-only market 80 GOOGL (perpOB). Same step sequence as the mirrored
+# markets (see market_70paxg.toml): create on PassivePerp, open and guard the
+# market's own collateral pool and market flag, configure, then merge into
+# CP1. The market configuration is inline because no other environment
+# registers this market. Parameters: [var.market_80googl] in the devnet omnibus.
+#####################################
+# Create Market
+#####################################
+[invoke.create_market_80googl]
+target = ["PassivePerpProxy"]
+abi = "<%= JSON.stringify(contracts.PassivePerpProxy.abi.concat({'type': 'event', 'name': 'MarketDataUpdatedV2', 'anonymous': false, 'inputs': [{'name': 'eventSequenceNumber', 'type': 'uint128', 'indexed': true, 'internalType': 'uint128'}, {'name': 'marketId', 'type': 'uint128', 'indexed': true, 'internalType': 'uint128'}, {'name': 'marketData', 'type': 'tuple', 'indexed': false, 'internalType': 'struct Market.Data', 'components': [{'name': 'id', 'type': 'uint128', 'internalType': 'uint128'}, {'name': 'passivePoolId_DEPRECATED', 'type': 'uint128', 'internalType': 'uint128'}, {'name': 'poolAccountId_DEPRECATED', 'type': 'uint128', 'internalType': 'uint128'}, {'name': 'quoteToken', 'type': 'address', 'internalType': 'address'}, {'name': 'quoteTokenDecimals', 'type': 'uint8', 'internalType': 'uint8'}, {'name': 'lastFundingVelocity_DEPRECATED', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'lastFundingRate_DEPRECATED', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'lastFundingTimestamp', 'type': 'uint256', 'internalType': 'uint256'}, {'name': 'lastMTM_DEPRECATED', 'type': 'tuple', 'internalType': 'struct PriceData', 'components': [{'name': 'price', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'timestamp', 'type': 'uint256', 'internalType': 'uint256'}]}, {'name': 'longTrackers', 'type': 'tuple', 'internalType': 'struct FundingAndADLTrackers', 'components': [{'name': 'fundingValue', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'baseMultiplier', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'adlUnwindPrice', 'type': 'uint256', 'internalType': 'UD60x18'}]}, {'name': 'shortTrackers', 'type': 'tuple', 'internalType': 'struct FundingAndADLTrackers', 'components': [{'name': 'fundingValue', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'baseMultiplier', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'adlUnwindPrice', 'type': 'uint256', 'internalType': 'UD60x18'}]}, {'name': 'openInterest', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'logPriceMultiplier_DEPRECATED', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'depthFactor_DEPRECATED', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'priceSpread_DEPRECATED', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'velocityMultiplier_DEPRECATED', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'markPrice', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'markPriceTimestamp', 'type': 'uint256', 'internalType': 'uint256'}, {'name': 'fundingRate', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'fundingRateTimestamp', 'type': 'uint256', 'internalType': 'uint256'}, {'name': 'lockedClosePrice', 'type': 'uint256', 'internalType': 'UD60x18'}]}, {'name': 'blockTimestamp', 'type': 'uint256', 'indexed': false, 'internalType': 'uint256'}]})) %>"
+fromCall.func = "owner"
+func = "createMarket"
+args = ["Market GOOGL", "<%= settings.rusdProxyAddress %>"]
+var.market_80googl.event = "MarketDataUpdatedV2"
+var.market_80googl.arg = 1
+depends = [
+    "invoke.core_register_instrument_passive_perp",
+    "invoke.core_unpause",
+    "invoke.passive_perp_global_config",
+    "invoke.create_market_79msft",
+]
+
+[var.market_80googl_vars]
+market80GooglId = "<%= (String(settings.market_80googl) === '80') ? settings.market_80googl : parseUnits('0', 'assert market_80googl_vars failed') %>"
+depends = ["invoke.create_market_80googl"]
+
+##################################################
+# Market's Collateral Pool Feature Flags
+##################################################
+[invoke.market_80googl_unpause_cp]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market80GooglId %>"]
+func = "setFeatureFlagAllowAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('collateralPoolEnabled')),settings.market80GooglId])) %>",
+    true,
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_80googl_vars"]
+
+[invoke.market_80googl_set_pausers_cp]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market80GooglId %>"]
+func = "setDeniers"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('collateralPoolEnabled')),settings.market80GooglId])) %>",
+    [
+        "<%= settings.pauser1 %>",
+        "<%= settings.pauser2 %>",
+        "<%= settings.pauser3 %>",
+        "<%= settings.pauser4 %>",
+    ],
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_80googl_vars"]
+
+##################################################
+# Market Feature Flags
+##################################################
+[invoke.market_80googl_unpause_market]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagAllowAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market80GooglId])) %>",
+    true,
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_80googl_vars"]
+
+[invoke.market_80googl_set_pausers_market]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setDeniers"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market80GooglId])) %>",
+    [
+        "<%= settings.pauser1 %>",
+        "<%= settings.pauser2 %>",
+        "<%= settings.pauser3 %>",
+        "<%= settings.pauser4 %>",
+    ],
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_80googl_vars"]
+
+#####################################
+# Market Configuration
+#####################################
+[invoke.market_80googl_set_cp_limits]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market80GooglId %>"]
+func = "setCollateralPoolLimits"
+args = [
+    "<%= settings.market80GooglId %>",
+    { maxMarkets = "1", maxCollaterals = "1" },
+]
+depends = ["invoke.create_market_80googl"]
+
+##################################################
+# Market's Collateral Pool Insurance Fund
+#
+# Required BEFORE the merge: CollateralPool.merge transfers the child's
+# insurance fund into the parent's, and getInsuranceFundAccount is
+# Account.exists(insuranceFundConfig().accountId) -- an unconfigured child
+# reverts AccountNotFound("0"). (The reserved account needs no step: Core sets
+# reservedAccountId when the pool is created.)
+##################################################
+[invoke.market_80googl_insurance_fund_config]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market80GooglId %>"]
+func = "configureCollateralPoolInsuranceFund"
+args = [
+    "<%= settings.market80GooglId %>",
+    { accountId = "<%= settings.cp1Rusd_insuranceFundAccountId %>", liquidationFee = "<%= parseEther(settings.cp1Rusd_insuranceFund_liquidationFeeUnscaled) %>" },
+]
+depends = [
+    "invoke.cp_1rusd_create_insurance_fund_account",
+    "invoke.create_market_80googl",
+]
+
+#####################################
+# Market Parameters
+#####################################
+[invoke.market_80googl_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market80GooglId %>",
+    { riskMatrixIndex = "<%= settings.market80Googl_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market80Googl_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market80Googl_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market80Googl_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market80Googl_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market80Googl_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market80Googl_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market80Googl_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market80Googl_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market80Googl_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market80Googl_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market80Googl_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market80Googl_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market80Googl_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market80Googl_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market80Googl_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market80Googl_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market80Googl_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market80Googl_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market80Googl_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market80Googl_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market80Googl_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_80googl",
+    "invoke.passive_perp_market_config_system_owner",
+]
+
+##################################################
+# Merge Market's Collateral Pool into CP1
+##################################################
+[invoke.market_80googl_merge_collateral_pool]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "mergeCollateralPools"
+args = ["<%= settings.market1EthId %>", "<%= settings.market80GooglId %>"]
+depends = [
+    "invoke.market_1eth_set_cp_limits",
+    "invoke.market_80googl_unpause_cp",
+    "invoke.market_80googl_set_pausers_cp",
+    "invoke.market_80googl_unpause_market",
+    "invoke.market_80googl_set_pausers_market",
+    "invoke.market_80googl_set_market_config",
+    "invoke.market_80googl_set_cp_limits",
+    "invoke.market_80googl_insurance_fund_config",
+]

@@ -1,0 +1,374 @@
+# Mainnet RWA settings: agreed rounded hybrid (5 min) tiers for all twelve markets
+# (76-81 agreed 6 October 2026, 82-87 on 7 October). Standard tiers reuse existing entries.
+# Changed risk inputs rerun the existing createRiskMatrix invokes; their events
+# supply replacement block IDs to the existing setRiskBlockId invokes.
+# The five-minute allowance applies to fast moves; ordinary volatility keeps two hours.
+[var.mainnet_rwa_stork_usdc_direct]
+storkAssetPairIdXAUUSDC_MK = "XAUUSDC_MK"
+storkAssetPairIdXAGUSDC_MK = "XAGUSDC_MK"
+storkAssetPairIdAAPLUSDC_MK = "AAPLUSDC_MK"
+storkAssetPairIdMSFTUSDC_MK = "MSFTUSDC_MK"
+storkAssetPairIdGOOGLUSDC_MK = "GOOGLUSDC_MK"
+storkAssetPairIdAMZNUSDC_MK = "AMZNUSDC_MK"
+storkAssetPairIdNVDAUSDC_MK = "NVDAUSDC_MK"
+storkAssetPairIdMETAUSDC_MK = "METAUSDC_MK"
+storkAssetPairIdTSLAUSDC_MK = "TSLAUSDC_MK"
+storkAssetPairIdSPYUSDC_MK = "SPYUSDC_MK"
+storkAssetPairIdQQQUSDC_MK = "QQQUSDC_MK"
+storkAssetPairIdWTIUSDC_MK = "WTIUSDC_MK"
+# Reference-node freshness matches mainnet crypto: 60 seconds, as for native marks.
+# Closed underlying sessions do not relax the maximum age of a signed oracle update.
+xauUsdcMarkMaxStaleDurationStork = "60"
+xagUsdcMarkMaxStaleDurationStork = "60"
+aaplUsdcMarkMaxStaleDurationStork = "60"
+msftUsdcMarkMaxStaleDurationStork = "60"
+googlUsdcMarkMaxStaleDurationStork = "60"
+amznUsdcMarkMaxStaleDurationStork = "60"
+nvdaUsdcMarkMaxStaleDurationStork = "60"
+metaUsdcMarkMaxStaleDurationStork = "60"
+tslaUsdcMarkMaxStaleDurationStork = "60"
+spyUsdcMarkMaxStaleDurationStork = "60"
+qqqUsdcMarkMaxStaleDurationStork = "60"
+wtiUsdcMarkMaxStaleDurationStork = "60"
+
+###############################################################################
+# Market 76 XAU Configuration -- staged mainnet
+###############################################################################
+[var.market_76xau]
+market76Xau_riskMatrixIndex = "0"
+cp1Rusd_market76Xau_riskMatrix00Unscaled = "0.000947"
+# Agreed launch cap: 120 troy ounces, not a constant USD cap.
+# API admission and UI visibility remain controlled separately by database policy.
+market76Xau_maxOpenBaseUnscaled = "120"
+market76Xau_oracleNodeId = "<%= settings.xauUsdcMarkNodeIdStork %>"
+market76Xau_dutchConfig_lambdaUnscaled = "1"
+market76Xau_dutchConfig_minBaseUnscaled = "0.0025"
+market76Xau_slippageParams_phiUnscaled = "0"
+market76Xau_slippageParams_betaUnscaled = "0"
+market76Xau_minimumOrderBaseUnscaled = "0.0025"
+market76Xau_baseSpacingUnscaled = "0.0001"
+market76Xau_priceSpacingUnscaled = "0.01"
+market76Xau_markPriceMaxStaleDuration = "60"
+market76Xau_fundingRateMaxStaleDuration = "600"
+market76Xau_minFundingInterval = "0"
+market76Xau_markPriceMaxDeviationUnscaled = "0.05"
+market76Xau_fillPriceMaxDeviationUnscaled = "0.05"
+market76Xau_priceSpreadUnscaled = "0"
+market76Xau_volatilityIndexMultiplierUnscaled = "0"
+market76Xau_maxPSlippageUnscaled = "0"
+market76Xau_maxExposureFactorUnscaled = "0.999"
+market76Xau_depthFactorUnscaled = "0"
+market76Xau_mtmWindow = "<%= 500 * settings.ONE_YEAR_IN_SECONDS %>"
+market76Xau_velocityMultiplierUnscaled = "0"
+
+###############################################################################
+# Market 77 XAG Configuration -- staged mainnet
+###############################################################################
+[var.market_77xag]
+market77Xag_riskMatrixIndex = "0"
+cp1Rusd_market77Xag_riskMatrix00Unscaled = "0.005917"
+market77Xag_maxOpenBaseUnscaled = "8100"
+market77Xag_oracleNodeId = "<%= settings.xagUsdcMarkNodeIdStork %>"
+market77Xag_dutchConfig_lambdaUnscaled = "1"
+market77Xag_dutchConfig_minBaseUnscaled = "0.15"
+market77Xag_slippageParams_phiUnscaled = "0"
+market77Xag_slippageParams_betaUnscaled = "0"
+market77Xag_minimumOrderBaseUnscaled = "0.15"
+market77Xag_baseSpacingUnscaled = "0.01"
+market77Xag_priceSpacingUnscaled = "0.0001"
+market77Xag_markPriceMaxStaleDuration = "60"
+market77Xag_fundingRateMaxStaleDuration = "600"
+market77Xag_minFundingInterval = "0"
+market77Xag_markPriceMaxDeviationUnscaled = "0.05"
+market77Xag_fillPriceMaxDeviationUnscaled = "0.05"
+market77Xag_priceSpreadUnscaled = "0"
+market77Xag_volatilityIndexMultiplierUnscaled = "0"
+market77Xag_maxPSlippageUnscaled = "0"
+market77Xag_maxExposureFactorUnscaled = "0.999"
+market77Xag_depthFactorUnscaled = "0"
+market77Xag_mtmWindow = "<%= 500 * settings.ONE_YEAR_IN_SECONDS %>"
+market77Xag_velocityMultiplierUnscaled = "0"
+
+###############################################################################
+# Market 78 AAPL Configuration -- staged mainnet
+###############################################################################
+[var.market_78aapl]
+market78Aapl_riskMatrixIndex = "0"
+cp1Rusd_market78Aapl_riskMatrix00Unscaled = "0.005917"
+market78Aapl_maxOpenBaseUnscaled = "750"
+market78Aapl_oracleNodeId = "<%= settings.aaplUsdcMarkNodeIdStork %>"
+market78Aapl_dutchConfig_lambdaUnscaled = "1"
+market78Aapl_dutchConfig_minBaseUnscaled = "0.03"
+market78Aapl_slippageParams_phiUnscaled = "0"
+market78Aapl_slippageParams_betaUnscaled = "0"
+market78Aapl_minimumOrderBaseUnscaled = "0.03"
+market78Aapl_baseSpacingUnscaled = "0.001"
+market78Aapl_priceSpacingUnscaled = "0.01"
+market78Aapl_markPriceMaxStaleDuration = "60"
+market78Aapl_fundingRateMaxStaleDuration = "600"
+market78Aapl_minFundingInterval = "0"
+market78Aapl_markPriceMaxDeviationUnscaled = "0.05"
+market78Aapl_fillPriceMaxDeviationUnscaled = "0.05"
+market78Aapl_priceSpreadUnscaled = "0"
+market78Aapl_volatilityIndexMultiplierUnscaled = "0"
+market78Aapl_maxPSlippageUnscaled = "0"
+market78Aapl_maxExposureFactorUnscaled = "0.999"
+market78Aapl_depthFactorUnscaled = "0"
+market78Aapl_mtmWindow = "<%= 500 * settings.ONE_YEAR_IN_SECONDS %>"
+market78Aapl_velocityMultiplierUnscaled = "0"
+
+###############################################################################
+# Market 79 MSFT Configuration -- staged mainnet
+###############################################################################
+[var.market_79msft]
+market79Msft_riskMatrixIndex = "0"
+cp1Rusd_market79Msft_riskMatrix00Unscaled = "0.00263"
+market79Msft_maxOpenBaseUnscaled = "490"
+market79Msft_oracleNodeId = "<%= settings.msftUsdcMarkNodeIdStork %>"
+market79Msft_dutchConfig_lambdaUnscaled = "1"
+market79Msft_dutchConfig_minBaseUnscaled = "0.02"
+market79Msft_slippageParams_phiUnscaled = "0"
+market79Msft_slippageParams_betaUnscaled = "0"
+market79Msft_minimumOrderBaseUnscaled = "0.02"
+market79Msft_baseSpacingUnscaled = "0.0001"
+market79Msft_priceSpacingUnscaled = "0.01"
+market79Msft_markPriceMaxStaleDuration = "60"
+market79Msft_fundingRateMaxStaleDuration = "600"
+market79Msft_minFundingInterval = "0"
+market79Msft_markPriceMaxDeviationUnscaled = "0.05"
+market79Msft_fillPriceMaxDeviationUnscaled = "0.05"
+market79Msft_priceSpreadUnscaled = "0"
+market79Msft_volatilityIndexMultiplierUnscaled = "0"
+market79Msft_maxPSlippageUnscaled = "0"
+market79Msft_maxExposureFactorUnscaled = "0.999"
+market79Msft_depthFactorUnscaled = "0"
+market79Msft_mtmWindow = "<%= 500 * settings.ONE_YEAR_IN_SECONDS %>"
+market79Msft_velocityMultiplierUnscaled = "0"
+
+###############################################################################
+# Market 80 GOOGL Configuration -- staged mainnet
+###############################################################################
+[var.market_80googl]
+market80Googl_riskMatrixIndex = "0"
+cp1Rusd_market80Googl_riskMatrix00Unscaled = "0.00263"
+market80Googl_maxOpenBaseUnscaled = "730"
+market80Googl_oracleNodeId = "<%= settings.googlUsdcMarkNodeIdStork %>"
+market80Googl_dutchConfig_lambdaUnscaled = "1"
+market80Googl_dutchConfig_minBaseUnscaled = "0.03"
+market80Googl_slippageParams_phiUnscaled = "0"
+market80Googl_slippageParams_betaUnscaled = "0"
+market80Googl_minimumOrderBaseUnscaled = "0.03"
+market80Googl_baseSpacingUnscaled = "0.0001"
+market80Googl_priceSpacingUnscaled = "0.01"
+market80Googl_markPriceMaxStaleDuration = "60"
+market80Googl_fundingRateMaxStaleDuration = "600"
+market80Googl_minFundingInterval = "0"
+market80Googl_markPriceMaxDeviationUnscaled = "0.05"
+market80Googl_fillPriceMaxDeviationUnscaled = "0.05"
+market80Googl_priceSpreadUnscaled = "0"
+market80Googl_volatilityIndexMultiplierUnscaled = "0"
+market80Googl_maxPSlippageUnscaled = "0"
+market80Googl_maxExposureFactorUnscaled = "0.999"
+market80Googl_depthFactorUnscaled = "0"
+market80Googl_mtmWindow = "<%= 500 * settings.ONE_YEAR_IN_SECONDS %>"
+market80Googl_velocityMultiplierUnscaled = "0"
+
+###############################################################################
+# Market 81 AMZN Configuration -- staged mainnet
+###############################################################################
+[var.market_81amzn]
+market81Amzn_riskMatrixIndex = "0"
+# 9x: (1 / (9 * 1.3))^2, rounded upward at 18-decimal precision.
+cp1Rusd_market81Amzn_riskMatrix00Unscaled = "0.007305135510263716"
+market81Amzn_maxOpenBaseUnscaled = "1000"
+market81Amzn_oracleNodeId = "<%= settings.amznUsdcMarkNodeIdStork %>"
+market81Amzn_dutchConfig_lambdaUnscaled = "1"
+market81Amzn_dutchConfig_minBaseUnscaled = "0.04"
+market81Amzn_slippageParams_phiUnscaled = "0"
+market81Amzn_slippageParams_betaUnscaled = "0"
+market81Amzn_minimumOrderBaseUnscaled = "0.04"
+market81Amzn_baseSpacingUnscaled = "0.001"
+market81Amzn_priceSpacingUnscaled = "0.01"
+market81Amzn_markPriceMaxStaleDuration = "60"
+market81Amzn_fundingRateMaxStaleDuration = "600"
+market81Amzn_minFundingInterval = "0"
+market81Amzn_markPriceMaxDeviationUnscaled = "0.05"
+market81Amzn_fillPriceMaxDeviationUnscaled = "0.05"
+market81Amzn_priceSpreadUnscaled = "0"
+market81Amzn_volatilityIndexMultiplierUnscaled = "0"
+market81Amzn_maxPSlippageUnscaled = "0"
+market81Amzn_maxExposureFactorUnscaled = "0.999"
+market81Amzn_depthFactorUnscaled = "0"
+market81Amzn_mtmWindow = "<%= 500 * settings.ONE_YEAR_IN_SECONDS %>"
+market81Amzn_velocityMultiplierUnscaled = "0"
+
+###############################################################################
+# Market 82 NVDA Configuration -- staged mainnet
+###############################################################################
+[var.market_82nvda]
+market82Nvda_riskMatrixIndex = "0"
+# 7x: (1 / (7 * 1.3))^2, rounded upward at 18-decimal precision.
+cp1Rusd_market82Nvda_riskMatrix00Unscaled = "0.012075836251660428"
+market82Nvda_maxOpenBaseUnscaled = "1000"
+market82Nvda_oracleNodeId = "<%= settings.nvdaUsdcMarkNodeIdStork %>"
+market82Nvda_dutchConfig_lambdaUnscaled = "1"
+market82Nvda_dutchConfig_minBaseUnscaled = "0.04"
+market82Nvda_slippageParams_phiUnscaled = "0"
+market82Nvda_slippageParams_betaUnscaled = "0"
+market82Nvda_minimumOrderBaseUnscaled = "0.04"
+market82Nvda_baseSpacingUnscaled = "0.001"
+market82Nvda_priceSpacingUnscaled = "0.01"
+market82Nvda_markPriceMaxStaleDuration = "60"
+market82Nvda_fundingRateMaxStaleDuration = "600"
+market82Nvda_minFundingInterval = "0"
+market82Nvda_markPriceMaxDeviationUnscaled = "0.05"
+market82Nvda_fillPriceMaxDeviationUnscaled = "0.05"
+market82Nvda_priceSpreadUnscaled = "0"
+market82Nvda_volatilityIndexMultiplierUnscaled = "0"
+market82Nvda_maxPSlippageUnscaled = "0"
+market82Nvda_maxExposureFactorUnscaled = "0.999"
+market82Nvda_depthFactorUnscaled = "0"
+market82Nvda_mtmWindow = "<%= 500 * settings.ONE_YEAR_IN_SECONDS %>"
+market82Nvda_velocityMultiplierUnscaled = "0"
+
+###############################################################################
+# Market 83 META Configuration -- staged mainnet
+###############################################################################
+[var.market_83meta]
+market83Meta_riskMatrixIndex = "0"
+# 6x: (1 / (6 * 1.3))^2, rounded upward at 18-decimal precision.
+cp1Rusd_market83Meta_riskMatrix00Unscaled = "0.01643655489809336"
+market83Meta_maxOpenBaseUnscaled = "340"
+market83Meta_oracleNodeId = "<%= settings.metaUsdcMarkNodeIdStork %>"
+market83Meta_dutchConfig_lambdaUnscaled = "1"
+market83Meta_dutchConfig_minBaseUnscaled = "0.015"
+market83Meta_slippageParams_phiUnscaled = "0"
+market83Meta_slippageParams_betaUnscaled = "0"
+market83Meta_minimumOrderBaseUnscaled = "0.015"
+market83Meta_baseSpacingUnscaled = "0.0001"
+market83Meta_priceSpacingUnscaled = "0.01"
+market83Meta_markPriceMaxStaleDuration = "60"
+market83Meta_fundingRateMaxStaleDuration = "600"
+market83Meta_minFundingInterval = "0"
+market83Meta_markPriceMaxDeviationUnscaled = "0.05"
+market83Meta_fillPriceMaxDeviationUnscaled = "0.05"
+market83Meta_priceSpreadUnscaled = "0"
+market83Meta_volatilityIndexMultiplierUnscaled = "0"
+market83Meta_maxPSlippageUnscaled = "0"
+market83Meta_maxExposureFactorUnscaled = "0.999"
+market83Meta_depthFactorUnscaled = "0"
+market83Meta_mtmWindow = "<%= 500 * settings.ONE_YEAR_IN_SECONDS %>"
+market83Meta_velocityMultiplierUnscaled = "0"
+
+###############################################################################
+# Market 84 TSLA Configuration -- staged mainnet
+###############################################################################
+[var.market_84tsla]
+market84Tsla_riskMatrixIndex = "0"
+# 8x: (1 / (8 * 1.3))^2, rounded upward at 18-decimal precision.
+cp1Rusd_market84Tsla_riskMatrix00Unscaled = "0.009245562130177515"
+market84Tsla_maxOpenBaseUnscaled = "700"
+market84Tsla_oracleNodeId = "<%= settings.tslaUsdcMarkNodeIdStork %>"
+market84Tsla_dutchConfig_lambdaUnscaled = "1"
+market84Tsla_dutchConfig_minBaseUnscaled = "0.03"
+market84Tsla_slippageParams_phiUnscaled = "0"
+market84Tsla_slippageParams_betaUnscaled = "0"
+market84Tsla_minimumOrderBaseUnscaled = "0.03"
+market84Tsla_baseSpacingUnscaled = "0.0001"
+market84Tsla_priceSpacingUnscaled = "0.01"
+market84Tsla_markPriceMaxStaleDuration = "60"
+market84Tsla_fundingRateMaxStaleDuration = "600"
+market84Tsla_minFundingInterval = "0"
+market84Tsla_markPriceMaxDeviationUnscaled = "0.05"
+market84Tsla_fillPriceMaxDeviationUnscaled = "0.05"
+market84Tsla_priceSpreadUnscaled = "0"
+market84Tsla_volatilityIndexMultiplierUnscaled = "0"
+market84Tsla_maxPSlippageUnscaled = "0"
+market84Tsla_maxExposureFactorUnscaled = "0.999"
+market84Tsla_depthFactorUnscaled = "0"
+market84Tsla_mtmWindow = "<%= 500 * settings.ONE_YEAR_IN_SECONDS %>"
+market84Tsla_velocityMultiplierUnscaled = "0"
+
+###############################################################################
+# Market 85 SPY Configuration -- staged mainnet
+###############################################################################
+[var.market_85spy]
+market85Spy_riskMatrixIndex = "0"
+cp1Rusd_market85Spy_riskMatrix00Unscaled = "0.000947"
+market85Spy_maxOpenBaseUnscaled = "320"
+market85Spy_oracleNodeId = "<%= settings.spyUsdcMarkNodeIdStork %>"
+market85Spy_dutchConfig_lambdaUnscaled = "1"
+market85Spy_dutchConfig_minBaseUnscaled = "0.015"
+market85Spy_slippageParams_phiUnscaled = "0"
+market85Spy_slippageParams_betaUnscaled = "0"
+market85Spy_minimumOrderBaseUnscaled = "0.015"
+market85Spy_baseSpacingUnscaled = "0.0001"
+market85Spy_priceSpacingUnscaled = "0.01"
+market85Spy_markPriceMaxStaleDuration = "60"
+market85Spy_fundingRateMaxStaleDuration = "600"
+market85Spy_minFundingInterval = "0"
+market85Spy_markPriceMaxDeviationUnscaled = "0.05"
+market85Spy_fillPriceMaxDeviationUnscaled = "0.05"
+market85Spy_priceSpreadUnscaled = "0"
+market85Spy_volatilityIndexMultiplierUnscaled = "0"
+market85Spy_maxPSlippageUnscaled = "0"
+market85Spy_maxExposureFactorUnscaled = "0.999"
+market85Spy_depthFactorUnscaled = "0"
+market85Spy_mtmWindow = "<%= 500 * settings.ONE_YEAR_IN_SECONDS %>"
+market85Spy_velocityMultiplierUnscaled = "0"
+
+###############################################################################
+# Market 86 QQQ Configuration -- staged mainnet
+###############################################################################
+[var.market_86qqq]
+market86Qqq_riskMatrixIndex = "0"
+cp1Rusd_market86Qqq_riskMatrix00Unscaled = "0.000947"
+market86Qqq_maxOpenBaseUnscaled = "670"
+market86Qqq_oracleNodeId = "<%= settings.qqqUsdcMarkNodeIdStork %>"
+market86Qqq_dutchConfig_lambdaUnscaled = "1"
+market86Qqq_dutchConfig_minBaseUnscaled = "0.015"
+market86Qqq_slippageParams_phiUnscaled = "0"
+market86Qqq_slippageParams_betaUnscaled = "0"
+market86Qqq_minimumOrderBaseUnscaled = "0.015"
+market86Qqq_baseSpacingUnscaled = "0.0001"
+market86Qqq_priceSpacingUnscaled = "0.01"
+market86Qqq_markPriceMaxStaleDuration = "60"
+market86Qqq_fundingRateMaxStaleDuration = "600"
+market86Qqq_minFundingInterval = "0"
+market86Qqq_markPriceMaxDeviationUnscaled = "0.05"
+market86Qqq_fillPriceMaxDeviationUnscaled = "0.05"
+market86Qqq_priceSpreadUnscaled = "0"
+market86Qqq_volatilityIndexMultiplierUnscaled = "0"
+market86Qqq_maxPSlippageUnscaled = "0"
+market86Qqq_maxExposureFactorUnscaled = "0.999"
+market86Qqq_depthFactorUnscaled = "0"
+market86Qqq_mtmWindow = "<%= 500 * settings.ONE_YEAR_IN_SECONDS %>"
+market86Qqq_velocityMultiplierUnscaled = "0"
+
+###############################################################################
+# Market 87 WTI Configuration -- staged mainnet
+###############################################################################
+[var.market_87wti]
+market87Wti_riskMatrixIndex = "0"
+cp1Rusd_market87Wti_riskMatrix00Unscaled = "0.005917"
+market87Wti_maxOpenBaseUnscaled = "2700"
+market87Wti_oracleNodeId = "<%= settings.wtiUsdcMarkNodeIdStork %>"
+market87Wti_dutchConfig_lambdaUnscaled = "1"
+market87Wti_dutchConfig_minBaseUnscaled = "0.1"
+market87Wti_slippageParams_phiUnscaled = "0"
+market87Wti_slippageParams_betaUnscaled = "0"
+market87Wti_minimumOrderBaseUnscaled = "0.1"
+market87Wti_baseSpacingUnscaled = "0.001"
+market87Wti_priceSpacingUnscaled = "0.001"
+market87Wti_markPriceMaxStaleDuration = "60"
+market87Wti_fundingRateMaxStaleDuration = "600"
+market87Wti_minFundingInterval = "0"
+market87Wti_markPriceMaxDeviationUnscaled = "0.05"
+market87Wti_fillPriceMaxDeviationUnscaled = "0.05"
+market87Wti_priceSpreadUnscaled = "0"
+market87Wti_volatilityIndexMultiplierUnscaled = "0"
+market87Wti_maxPSlippageUnscaled = "0"
+market87Wti_maxExposureFactorUnscaled = "0.999"
+market87Wti_depthFactorUnscaled = "0"
+market87Wti_mtmWindow = "<%= 500 * settings.ONE_YEAR_IN_SECONDS %>"
+market87Wti_velocityMultiplierUnscaled = "0"

@@ -1,0 +1,20 @@
+# All twelve mainnet RWA markets (76-87). 76-81 executed in earlier releases; 82-87
+# register from the published 1.1.7 state. Cannon tracks action names, not files.
+# Included only by reya_network, never the shared mainnet/Cronos collateral-pool graph.
+include = [
+    "settings.toml",
+    "stork_usdc_direct.toml",
+    "markets/market_76xau.toml",
+    "markets/market_77xag.toml",
+    "markets/market_78aapl.toml",
+    "markets/market_79msft.toml",
+    "markets/market_80googl.toml",
+    "markets/market_81amzn.toml",
+    "markets/market_82nvda.toml",
+    "markets/market_83meta.toml",
+    "markets/market_84tsla.toml",
+    "markets/market_85spy.toml",
+    "markets/market_86qqq.toml",
+    "markets/market_87wti.toml",
+    "risk_matrix.toml",
+]

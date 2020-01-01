@@ -1,0 +1,152 @@
+# Mainnet RWA: capacity comes from settings; API/UI activation is separate.
+#####################################
+# Create Market
+#####################################
+[invoke.create_market_76xau]
+target = ["PassivePerpProxy"]
+abi = "<%= JSON.stringify(contracts.PassivePerpProxy.abi.concat({'type': 'event', 'name': 'MarketDataUpdatedV2', 'anonymous': false, 'inputs': [{'name': 'eventSequenceNumber', 'type': 'uint128', 'indexed': true, 'internalType': 'uint128'}, {'name': 'marketId', 'type': 'uint128', 'indexed': true, 'internalType': 'uint128'}, {'name': 'marketData', 'type': 'tuple', 'indexed': false, 'internalType': 'struct Market.Data', 'components': [{'name': 'id', 'type': 'uint128', 'internalType': 'uint128'}, {'name': 'passivePoolId_DEPRECATED', 'type': 'uint128', 'internalType': 'uint128'}, {'name': 'poolAccountId_DEPRECATED', 'type': 'uint128', 'internalType': 'uint128'}, {'name': 'quoteToken', 'type': 'address', 'internalType': 'address'}, {'name': 'quoteTokenDecimals', 'type': 'uint8', 'internalType': 'uint8'}, {'name': 'lastFundingVelocity_DEPRECATED', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'lastFundingRate_DEPRECATED', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'lastFundingTimestamp', 'type': 'uint256', 'internalType': 'uint256'}, {'name': 'lastMTM_DEPRECATED', 'type': 'tuple', 'internalType': 'struct PriceData', 'components': [{'name': 'price', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'timestamp', 'type': 'uint256', 'internalType': 'uint256'}]}, {'name': 'longTrackers', 'type': 'tuple', 'internalType': 'struct FundingAndADLTrackers', 'components': [{'name': 'fundingValue', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'baseMultiplier', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'adlUnwindPrice', 'type': 'uint256', 'internalType': 'UD60x18'}]}, {'name': 'shortTrackers', 'type': 'tuple', 'internalType': 'struct FundingAndADLTrackers', 'components': [{'name': 'fundingValue', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'baseMultiplier', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'adlUnwindPrice', 'type': 'uint256', 'internalType': 'UD60x18'}]}, {'name': 'openInterest', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'logPriceMultiplier_DEPRECATED', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'depthFactor_DEPRECATED', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'priceSpread_DEPRECATED', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'velocityMultiplier_DEPRECATED', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'markPrice', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'markPriceTimestamp', 'type': 'uint256', 'internalType': 'uint256'}, {'name': 'fundingRate', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'fundingRateTimestamp', 'type': 'uint256', 'internalType': 'uint256'}, {'name': 'lockedClosePrice', 'type': 'uint256', 'internalType': 'UD60x18'}]}, {'name': 'blockTimestamp', 'type': 'uint256', 'indexed': false, 'internalType': 'uint256'}]})) %>"
+fromCall.func = "owner"
+func = "createMarket"
+args = ["Market XAU", "<%= settings.rUSDProxy %>"]
+var.market_76xau.event = "MarketDataUpdatedV2"
+var.market_76xau.arg = 1
+depends = [
+    "invoke.core_register_instrument_passive_perp",
+    "invoke.core_unpause",
+    "invoke.passive_perp_global_config",
+    "invoke.create_market_75mega",
+]
+
+[var.market_76xau_vars]
+market76XauId = "<%= (String(settings.market_76xau) === '76') ? settings.market_76xau : parseUnits('0', 'assert market_76xau_vars failed') %>"
+depends = ["invoke.create_market_76xau"]
+
+##################################################
+# Market's Collateral Pool Feature Flags
+##################################################
+[invoke.market_76xau_unpause_cp]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market76XauId %>"]
+func = "setFeatureFlagAllowAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('collateralPoolEnabled')),settings.market76XauId])) %>",
+    true,
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_76xau_vars"]
+
+[invoke.market_76xau_set_pausers_cp]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market76XauId %>"]
+func = "setDeniers"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('collateralPoolEnabled')),settings.market76XauId])) %>",
+    [
+        "<%= settings.pauser1 %>",
+        "<%= settings.pauser2 %>",
+        "<%= settings.pauser3 %>",
+        "<%= settings.pauser4 %>",
+    ],
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_76xau_vars"]
+
+##################################################
+# Market Feature Flags
+##################################################
+[invoke.market_76xau_unpause_market]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagAllowAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market76XauId])) %>",
+    true,
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_76xau_vars"]
+
+[invoke.market_76xau_set_pausers_market]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setDeniers"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market76XauId])) %>",
+    [
+        "<%= settings.pauser1 %>",
+        "<%= settings.pauser2 %>",
+        "<%= settings.pauser3 %>",
+        "<%= settings.pauser4 %>",
+    ],
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_76xau_vars"]
+
+#####################################
+# Market Configuration
+#####################################
+[invoke.market_76xau_set_cp_limits]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market76XauId %>"]
+func = "setCollateralPoolLimits"
+args = [
+    "<%= settings.market76XauId %>",
+    { maxMarkets = "1", maxCollaterals = "1" },
+]
+depends = ["invoke.create_market_76xau"]
+
+##################################################
+# Market's Collateral Pool Insurance Fund
+#
+# Required BEFORE the merge: CollateralPool.merge transfers the child's
+# insurance fund into the parent's, and getInsuranceFundAccount is
+# Account.exists(insuranceFundConfig().accountId) -- an unconfigured child
+# reverts AccountNotFound("0"). (The reserved account needs no step: Core sets
+# reservedAccountId when the pool is created.)
+##################################################
+[invoke.market_76xau_insurance_fund_config]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market76XauId %>"]
+func = "configureCollateralPoolInsuranceFund"
+args = [
+    "<%= settings.market76XauId %>",
+    { accountId = "<%= settings.cp1Rusd_insuranceFundAccountId %>", liquidationFee = "<%= parseEther(settings.cp1Rusd_insuranceFund_liquidationFeeUnscaled) %>" },
+]
+depends = [
+    "invoke.cp_1rusd_create_insurance_fund_account",
+    "invoke.create_market_76xau",
+]
+
+#####################################
+# Market Parameters
+#####################################
+[invoke.market_76xau_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market76XauId %>",
+    { riskMatrixIndex = "<%= settings.market76Xau_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market76Xau_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market76Xau_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market76Xau_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market76Xau_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market76Xau_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market76Xau_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market76Xau_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market76Xau_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market76Xau_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market76Xau_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market76Xau_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market76Xau_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market76Xau_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market76Xau_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market76Xau_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market76Xau_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market76Xau_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market76Xau_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market76Xau_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market76Xau_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market76Xau_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_76xau",
+    "invoke.passive_perp_market_config_system_owner",
+]
+
+##################################################
+# Merge Market's Collateral Pool into CP1
+##################################################
+[invoke.market_76xau_merge_collateral_pool]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "mergeCollateralPools"
+args = ["<%= settings.market1EthId %>", "<%= settings.market76XauId %>"]
+depends = [
+    "invoke.market_1eth_set_cp_limits",
+    "invoke.market_76xau_unpause_cp",
+    "invoke.market_76xau_set_pausers_cp",
+    "invoke.market_76xau_unpause_market",
+    "invoke.market_76xau_set_pausers_market",
+    "invoke.market_76xau_set_market_config",
+    "invoke.market_76xau_set_cp_limits",
+    "invoke.market_76xau_insurance_fund_config",
+]

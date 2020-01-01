@@ -1,0 +1,14 @@
+{
+  "//": "Mainnet legacy routers whose local portable tags have drifted. These exact deploy and misc CIDs match the imports in the published reya-omnibus:1.1.2@main baseline (rechecked 2 October 2026) and the Optimism registry on 30 September 2026. Prime alongside perpob.lock.json; never copy another environment's complete tags directory.",
+  "chainId": 13370,
+  "packages": {
+    "reya-rusd:1.0.0@router": {
+      "deploy": "Qmc4X5Bao6f9UT1REoHDNAWDmUQFeZsZCh6ESsAntjtWiC",
+      "misc": "QmcDP9nucqpoJNA4x1qpBRdD4G17RTEjkoVQ3KkiwJWkAr"
+    },
+    "reya-exchange-pass-nft:1.0.0@router": {
+      "deploy": "Qmf5mKSS6zsThJAhgQPm3k1NFRXpKeQnjxoD6a2GRF37m8",
+      "misc": "QmeVeUerRxKXc1gB7sAV3KLRajBQBY3NDG4jL9oCgbjsYX"
+    }
+  }
+}

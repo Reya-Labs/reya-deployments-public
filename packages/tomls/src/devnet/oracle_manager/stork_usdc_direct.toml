@@ -1,0 +1,295 @@
+# Direct Stork mark nodes for the devnet-only markets 76-87.
+#
+# The pairs are USDC-quoted (<ASSET>USDC_MK), so each node is a plain
+# STORK_OFFCHAIN_LOOKUP on devnet's own adapters with no parents -- unlike the
+# shared *UsdcMarkNodeIdStork nodes, which DIV_REDUCE a USD pair by USDCUSD.
+# Each node is its market's oracleNodeId (mark/fill collar reference).
+# Pair ids and staleness: [var.devnet_stork_usdc_direct] in the devnet omnibus.
+
+[invoke.oracle_manager_register_node_xau_usdc_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_STORK_OFFCHAIN_LOOKUP %>",
+    "<%= defaultAbiCoder.encode(['address','string'], [contracts.OracleAdaptersProxy.address, settings.storkAssetPairIdXAUUSDC_MK]) %>",
+    [
+    ],
+]
+var.xauUsdcMarkNodeIdStork.event = "NodeRegistered"
+var.xauUsdcMarkNodeIdStork.arg = 0
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[invoke.oracle_manager_xau_usdc_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.xauUsdcMarkNodeIdStork %>",
+    "<%= settings.xauUsdcMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_xau_usdc_mark_stork"]
+
+[invoke.oracle_manager_register_node_xag_usdc_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_STORK_OFFCHAIN_LOOKUP %>",
+    "<%= defaultAbiCoder.encode(['address','string'], [contracts.OracleAdaptersProxy.address, settings.storkAssetPairIdXAGUSDC_MK]) %>",
+    [
+    ],
+]
+var.xagUsdcMarkNodeIdStork.event = "NodeRegistered"
+var.xagUsdcMarkNodeIdStork.arg = 0
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[invoke.oracle_manager_xag_usdc_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.xagUsdcMarkNodeIdStork %>",
+    "<%= settings.xagUsdcMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_xag_usdc_mark_stork"]
+
+[invoke.oracle_manager_register_node_aapl_usdc_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_STORK_OFFCHAIN_LOOKUP %>",
+    "<%= defaultAbiCoder.encode(['address','string'], [contracts.OracleAdaptersProxy.address, settings.storkAssetPairIdAAPLUSDC_MK]) %>",
+    [
+    ],
+]
+var.aaplUsdcMarkNodeIdStork.event = "NodeRegistered"
+var.aaplUsdcMarkNodeIdStork.arg = 0
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[invoke.oracle_manager_aapl_usdc_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.aaplUsdcMarkNodeIdStork %>",
+    "<%= settings.aaplUsdcMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_aapl_usdc_mark_stork"]
+
+[invoke.oracle_manager_register_node_msft_usdc_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_STORK_OFFCHAIN_LOOKUP %>",
+    "<%= defaultAbiCoder.encode(['address','string'], [contracts.OracleAdaptersProxy.address, settings.storkAssetPairIdMSFTUSDC_MK]) %>",
+    [
+    ],
+]
+var.msftUsdcMarkNodeIdStork.event = "NodeRegistered"
+var.msftUsdcMarkNodeIdStork.arg = 0
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[invoke.oracle_manager_msft_usdc_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.msftUsdcMarkNodeIdStork %>",
+    "<%= settings.msftUsdcMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_msft_usdc_mark_stork"]
+
+[invoke.oracle_manager_register_node_googl_usdc_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_STORK_OFFCHAIN_LOOKUP %>",
+    "<%= defaultAbiCoder.encode(['address','string'], [contracts.OracleAdaptersProxy.address, settings.storkAssetPairIdGOOGLUSDC_MK]) %>",
+    [
+    ],
+]
+var.googlUsdcMarkNodeIdStork.event = "NodeRegistered"
+var.googlUsdcMarkNodeIdStork.arg = 0
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[invoke.oracle_manager_googl_usdc_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.googlUsdcMarkNodeIdStork %>",
+    "<%= settings.googlUsdcMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_googl_usdc_mark_stork"]
+
+[invoke.oracle_manager_register_node_amzn_usdc_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_STORK_OFFCHAIN_LOOKUP %>",
+    "<%= defaultAbiCoder.encode(['address','string'], [contracts.OracleAdaptersProxy.address, settings.storkAssetPairIdAMZNUSDC_MK]) %>",
+    [
+    ],
+]
+var.amznUsdcMarkNodeIdStork.event = "NodeRegistered"
+var.amznUsdcMarkNodeIdStork.arg = 0
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[invoke.oracle_manager_amzn_usdc_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.amznUsdcMarkNodeIdStork %>",
+    "<%= settings.amznUsdcMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_amzn_usdc_mark_stork"]
+
+[invoke.oracle_manager_register_node_nvda_usdc_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_STORK_OFFCHAIN_LOOKUP %>",
+    "<%= defaultAbiCoder.encode(['address','string'], [contracts.OracleAdaptersProxy.address, settings.storkAssetPairIdNVDAUSDC_MK]) %>",
+    [
+    ],
+]
+var.nvdaUsdcMarkNodeIdStork.event = "NodeRegistered"
+var.nvdaUsdcMarkNodeIdStork.arg = 0
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[invoke.oracle_manager_nvda_usdc_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.nvdaUsdcMarkNodeIdStork %>",
+    "<%= settings.nvdaUsdcMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_nvda_usdc_mark_stork"]
+
+[invoke.oracle_manager_register_node_meta_usdc_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_STORK_OFFCHAIN_LOOKUP %>",
+    "<%= defaultAbiCoder.encode(['address','string'], [contracts.OracleAdaptersProxy.address, settings.storkAssetPairIdMETAUSDC_MK]) %>",
+    [
+    ],
+]
+var.metaUsdcMarkNodeIdStork.event = "NodeRegistered"
+var.metaUsdcMarkNodeIdStork.arg = 0
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[invoke.oracle_manager_meta_usdc_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.metaUsdcMarkNodeIdStork %>",
+    "<%= settings.metaUsdcMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_meta_usdc_mark_stork"]
+
+[invoke.oracle_manager_register_node_tsla_usdc_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_STORK_OFFCHAIN_LOOKUP %>",
+    "<%= defaultAbiCoder.encode(['address','string'], [contracts.OracleAdaptersProxy.address, settings.storkAssetPairIdTSLAUSDC_MK]) %>",
+    [
+    ],
+]
+var.tslaUsdcMarkNodeIdStork.event = "NodeRegistered"
+var.tslaUsdcMarkNodeIdStork.arg = 0
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[invoke.oracle_manager_tsla_usdc_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.tslaUsdcMarkNodeIdStork %>",
+    "<%= settings.tslaUsdcMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_tsla_usdc_mark_stork"]
+
+[invoke.oracle_manager_register_node_spy_usdc_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_STORK_OFFCHAIN_LOOKUP %>",
+    "<%= defaultAbiCoder.encode(['address','string'], [contracts.OracleAdaptersProxy.address, settings.storkAssetPairIdSPYUSDC_MK]) %>",
+    [
+    ],
+]
+var.spyUsdcMarkNodeIdStork.event = "NodeRegistered"
+var.spyUsdcMarkNodeIdStork.arg = 0
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[invoke.oracle_manager_spy_usdc_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.spyUsdcMarkNodeIdStork %>",
+    "<%= settings.spyUsdcMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_spy_usdc_mark_stork"]
+
+[invoke.oracle_manager_register_node_qqq_usdc_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_STORK_OFFCHAIN_LOOKUP %>",
+    "<%= defaultAbiCoder.encode(['address','string'], [contracts.OracleAdaptersProxy.address, settings.storkAssetPairIdQQQUSDC_MK]) %>",
+    [
+    ],
+]
+var.qqqUsdcMarkNodeIdStork.event = "NodeRegistered"
+var.qqqUsdcMarkNodeIdStork.arg = 0
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[invoke.oracle_manager_qqq_usdc_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.qqqUsdcMarkNodeIdStork %>",
+    "<%= settings.qqqUsdcMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_qqq_usdc_mark_stork"]
+
+[invoke.oracle_manager_register_node_wti_usdc_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_STORK_OFFCHAIN_LOOKUP %>",
+    "<%= defaultAbiCoder.encode(['address','string'], [contracts.OracleAdaptersProxy.address, settings.storkAssetPairIdWTIUSDC_MK]) %>",
+    [
+    ],
+]
+var.wtiUsdcMarkNodeIdStork.event = "NodeRegistered"
+var.wtiUsdcMarkNodeIdStork.arg = 0
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[invoke.oracle_manager_wti_usdc_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.wtiUsdcMarkNodeIdStork %>",
+    "<%= settings.wtiUsdcMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_wti_usdc_mark_stork"]

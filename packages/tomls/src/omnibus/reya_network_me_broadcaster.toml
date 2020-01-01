@@ -1,0 +1,10 @@
+# Permission-only prerequisite. No router upgrades, deployments or other grants.
+# Review and execute through the mainnet Safe/Cannon workflow independently of
+# the provisional reya_network_perpob.toml rehearsal package.
+include = ["../orders_gateway/configs/mainnet_me_broadcaster.toml"]
+
+name = "reya-mainnet-me-permission"
+preset = "main"
+version = "1.0.0"
+description = "Allow the dedicated mainnet matching-engine broadcaster to relay fills"
+privateSourceCode = true

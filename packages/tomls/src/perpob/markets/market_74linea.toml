@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_74linea_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market74LineaId %>",
+    { riskMatrixIndex = "<%= settings.market74Linea_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market74Linea_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market74Linea_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market74Linea_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market74Linea_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market74Linea_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market74Linea_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market74Linea_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market74Linea_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market74Linea_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market74Linea_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market74Linea_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market74Linea_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market74Linea_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market74Linea_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market74Linea_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market74Linea_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market74Linea_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market74Linea_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market74Linea_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market74Linea_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market74Linea_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_74linea",
+    "invoke.passive_perp_market_config_system_owner",
+]

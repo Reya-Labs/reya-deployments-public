@@ -1,0 +1,145 @@
+# The token owner also receives subscription proceeds.
+[setting.rflowCustodian1]
+defaultValue = "<%= settings.owner %>"
+
+[var.rflow_vars]
+rflowTokenName = "Reya Flow Traders LM"
+rflowTokenSymbol = "rFlow"
+
+[clone.rflow]
+source = "<%= settings.shareTokensProxyPackage %>"
+target = "reya-share-tokens:1.0.0@rflow"
+options.owner = "<%= settings.owner %>"
+options.salt = "<%= settings.rflowSalt %>"
+depends = ["var.initial_proxy_vars", "var.cannonClonePackages"]
+
+# Upgrades implementation of InitialProxy to point to the new
+# router implementation.
+[invoke.upgrade_rflow_proxy]
+target = ["rflow.InitialProxy"]
+fromCall.func = "owner"
+func = "upgradeTo"
+args = [
+    "<%= imports.reyaShareTokenRouter.contracts.ShareTokenRouter.address %>",
+]
+factory.RFLOWProxy.abiOf = ["reyaShareTokenRouter.ShareTokenRouter"]
+factory.RFLOWProxy.event = "Upgraded"
+factory.RFLOWProxy.arg = 0
+depends = ["clone.rflow", "clone.reyaShareTokenRouter"]
+
+[invoke.rflow_initialize]
+target = ["RFLOWProxy"]
+fromCall.func = "owner"
+func = "initialize"
+args = [
+    "<%= settings.rflowTokenName %>",
+    "<%= settings.rflowTokenSymbol %>",
+    "<%= settings.rflowTokenDecimals %>",
+]
+depends = ["invoke.upgrade_rflow_proxy"]
+
+[invoke.rflow_set_pausers]
+target = ["RFLOWProxy"]
+fromCall.func = "owner"
+func = "setDeniers"
+args = [
+    "<%= keccak256(hexlify('global')) %>",
+    [
+        "<%= settings.pauser1 %>",
+        "<%= settings.pauser2 %>",
+        "<%= settings.pauser3 %>",
+        "<%= settings.pauser4 %>",
+    ],
+]
+depends = ["invoke.rflow_initialize"]
+
+[invoke.rflow_global_config]
+target = ["RFLOWProxy"]
+fromCall.func = "owner"
+func = "setGlobalConfiguration"
+args = [{ coreProxy = "<%= contracts.CoreProxy.address %>" }]
+depends = ["invoke.rflow_initialize"]
+
+[invoke.rflow_enable_minter1]
+target = ["RFLOWProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = ["<%= keccak256(hexlify('mint')) %>", "<%= settings.rflowMinter1 %>"]
+depends = ["invoke.rflow_initialize"]
+
+[invoke.rflow_enable_subscriber]
+target = ["RFLOWProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('subscription')) %>",
+    "<%= settings.rflowSubscriber1 %>",
+]
+depends = ["invoke.rflow_initialize"]
+
+[invoke.rflow_enable_redeemer]
+target = ["RFLOWProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('redemption')) %>",
+    "<%= settings.rflowRedeemer1 %>",
+]
+depends = ["invoke.rflow_initialize"]
+
+[invoke.rflow_enable_custodian]
+target = ["RFLOWProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('whitelistedCustodians')) %>",
+    "<%= getAddress(settings.rflowCustodian1) %>",
+]
+depends = ["invoke.rflow_initialize"]
+
+[invoke.rflow_enable_underlying_token]
+target = ["RFLOWProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('whitelistedTokens')) %>",
+    "<%= settings.rUSDProxy %>",
+]
+depends = ["invoke.rflow_initialize"]
+
+# The receipt is a 1:1 claim on one sUSDe, so repaid sUSDe can retire it directly.
+# Depending on the rUSD step keeps rUSD first in the allowlist.
+[invoke.rflow_enable_underlying_susde]
+target = ["RFLOWProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('whitelistedTokens')) %>",
+    "<%= settings.receiptSettlementSusde %>",
+]
+depends = [
+    "invoke.rflow_enable_underlying_token",
+    "var.receipt_settlement_assets",
+]
+
+# Expose the fully configured token only after settlement allowlists, registration and pool admission.
+[invoke.rflow_unpause]
+target = ["RFLOWProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagAllowAll"
+args = ["<%= keccak256(hexlify('global')) %>", true]
+depends = [
+    "invoke.rflow_initialize",
+    "invoke.rflow_global_config",
+    "invoke.rflow_set_pausers",
+    "invoke.rflow_enable_minter1",
+    "invoke.rflow_enable_subscriber",
+    "invoke.rflow_enable_redeemer",
+    "invoke.rflow_enable_custodian",
+    "invoke.rflow_enable_underlying_token",
+    "invoke.rflow_enable_underlying_susde",
+    "invoke.cp_1rusd_set_rflow_config",
+    "invoke.passive_pool_allow_rflow_for_auto_rebalance",
+    "invoke.rflow_auto_exchange_access",
+    "invoke.rflow_rusd_configure_spot_market",
+]

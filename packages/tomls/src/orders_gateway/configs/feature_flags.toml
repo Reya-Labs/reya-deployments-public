@@ -1,0 +1,138 @@
+[invoke.orders_gateway_unpause]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagAllowAll"
+args = ["<%= keccak256(hexlify('global')) %>", true]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
+
+[invoke.orders_gateway_disable_conditional_orders_allow_all]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagAllowAll"
+args = ["<%= keccak256(hexlify('conditional_orders')) %>", false]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
+
+[invoke.orders_gateway_set_pausers]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "setDeniers"
+args = [
+    "<%= keccak256(hexlify('global')) %>",
+    [
+        "<%= settings.pauser1 %>",
+        "<%= settings.pauser2 %>",
+        "<%= settings.pauser3 %>",
+        "<%= settings.pauser4 %>",
+    ],
+]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
+
+[invoke.orders_gateway_enable_execution_bot]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('conditional_orders')) %>",
+    "<%= settings.co_execution_bot1 %>",
+]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
+
+[invoke.orders_gateway_enable_execution_bot_2]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('conditional_orders')) %>",
+    "<%= settings.co_execution_bot2 %>",
+]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
+
+[invoke.orders_gateway_enable_execution_bot_3]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('conditional_orders')) %>",
+    "<%= settings.co_execution_bot3 %>",
+]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
+
+[invoke.orders_gateway_enable_execution_bot_4]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('conditional_orders')) %>",
+    "<%= settings.co_execution_bot4 %>",
+]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
+
+[invoke.orders_gateway_enable_execution_bot_5]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('conditional_orders')) %>",
+    "<%= settings.co_execution_bot5 %>",
+]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
+
+[invoke.orders_gateway_enable_execution_bot_6]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('conditional_orders')) %>",
+    "<%= settings.co_execution_bot6 %>",
+]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
+
+[invoke.orders_gateway_enable_execution_bot_7]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('conditional_orders')) %>",
+    "<%= settings.co_execution_bot7 %>",
+]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
+
+[invoke.orders_gateway_enable_execution_bot_8]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('conditional_orders')) %>",
+    "<%= settings.co_execution_bot8 %>",
+]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
+
+[invoke.orders_gateway_enable_execution_bot_9]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('conditional_orders')) %>",
+    "<%= settings.co_execution_bot9 %>",
+]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
+
+[invoke.orders_gateway_enable_matching_engine_publisher_1]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('matching_engine_publisher')) %>",
+    "<%= settings.matching_engine_publisher1 %>",
+]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
+
+[invoke.orders_gateway_enable_cancel_nonce_bot_1]
+target = ["OrdersGatewayProxy"]
+fromCall.func = "owner"
+func = "addToFeatureFlagAllowlist"
+args = [
+    "<%= keccak256(hexlify('cancel_nonce')) %>",
+    "<%= settings.cancel_nonce_bot1 %>",
+]
+depends = ["invoke.upgrade_orders_gateway_proxy"]
