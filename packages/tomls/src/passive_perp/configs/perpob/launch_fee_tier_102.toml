@@ -1,0 +1,11 @@
+# Costin/Simon launch decision, 23 Sep: tier 102 uses the standard 3 bp taker fee.
+# Shared by mainnet and its devnet mirror. Maker fields are inert Fee V3 placeholders.
+[invoke.passive_perp_set_tier102_parameters]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeeTierParameters"
+args = [
+    "102",
+    { takerFee = "<%= parseEther('0.00030') %>", makerFee_DEPRECATED = "0", makerRebate_DEPRECATED = "0" },
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]

@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_31ena_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market31EnaId %>",
+    { riskMatrixIndex = "<%= settings.market31Ena_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market31Ena_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market31Ena_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market31Ena_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market31Ena_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market31Ena_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market31Ena_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market31Ena_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market31Ena_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market31Ena_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market31Ena_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market31Ena_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market31Ena_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market31Ena_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market31Ena_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market31Ena_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market31Ena_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market31Ena_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market31Ena_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market31Ena_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market31Ena_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market31Ena_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_31ena",
+    "invoke.passive_perp_market_config_system_owner",
+]

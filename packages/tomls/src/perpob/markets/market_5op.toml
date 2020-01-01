@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_5op_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market5OpId %>",
+    { riskMatrixIndex = "<%= settings.market5Op_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market5Op_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market5Op_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market5Op_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market5Op_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market5Op_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market5Op_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market5Op_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market5Op_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market5Op_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market5Op_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market5Op_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market5Op_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market5Op_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market5Op_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market5Op_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market5Op_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market5Op_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market5Op_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market5Op_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market5Op_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market5Op_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_5op",
+    "invoke.passive_perp_market_config_system_owner",
+]

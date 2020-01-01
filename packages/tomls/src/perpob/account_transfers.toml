@@ -1,0 +1,15 @@
+# Owner-scoped withdrawal locks require ownership to remain fixed (network #760).
+# Permanent non-transferability (#761) is a separate release; minting stays enabled.
+[invoke.core_disable_account_transfer]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagAllowAll"
+args = ["<%= keccak256(hexlify('notifyAccountTransfer')) %>", false]
+depends = ["invoke.upgrade_core_proxy"]
+
+[invoke.core_deny_account_transfer]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagDenyAll"
+args = ["<%= keccak256(hexlify('notifyAccountTransfer')) %>", true]
+depends = ["invoke.core_disable_account_transfer"]

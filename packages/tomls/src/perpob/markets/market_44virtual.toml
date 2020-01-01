@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_44virtual_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market44VirtualId %>",
+    { riskMatrixIndex = "<%= settings.market44Virtual_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market44Virtual_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market44Virtual_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market44Virtual_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market44Virtual_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market44Virtual_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market44Virtual_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market44Virtual_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market44Virtual_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market44Virtual_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market44Virtual_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market44Virtual_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market44Virtual_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market44Virtual_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market44Virtual_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market44Virtual_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market44Virtual_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market44Virtual_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market44Virtual_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market44Virtual_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market44Virtual_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market44Virtual_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_44virtual",
+    "invoke.passive_perp_market_config_system_owner",
+]

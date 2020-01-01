@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_23apt_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market23AptId %>",
+    { riskMatrixIndex = "<%= settings.market23Apt_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market23Apt_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market23Apt_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market23Apt_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market23Apt_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market23Apt_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market23Apt_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market23Apt_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market23Apt_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market23Apt_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market23Apt_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market23Apt_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market23Apt_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market23Apt_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market23Apt_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market23Apt_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market23Apt_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market23Apt_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market23Apt_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market23Apt_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market23Apt_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market23Apt_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_23apt",
+    "invoke.passive_perp_market_config_system_owner",
+]

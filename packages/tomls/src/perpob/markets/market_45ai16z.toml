@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_45ai16z_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market45Ai16zId %>",
+    { riskMatrixIndex = "<%= settings.market45Ai16z_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market45Ai16z_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market45Ai16z_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market45Ai16z_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market45Ai16z_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market45Ai16z_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market45Ai16z_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market45Ai16z_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market45Ai16z_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market45Ai16z_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market45Ai16z_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market45Ai16z_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market45Ai16z_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market45Ai16z_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market45Ai16z_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market45Ai16z_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market45Ai16z_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market45Ai16z_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market45Ai16z_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market45Ai16z_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market45Ai16z_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market45Ai16z_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_45ai16z",
+    "invoke.passive_perp_market_config_system_owner",
+]

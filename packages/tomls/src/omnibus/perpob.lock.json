@@ -1,0 +1,28 @@
+{
+  "//": "Immutable router sources shared by mainnet, Cronos and devnet. Core 1.1.5 includes withdrawal locks; PassivePerp 1.1.4 resets referrals to V3. These are the completed devnet 1.1.10 router artifacts. Account ownership hard-disable (#761) is excluded; the existing transfer feature flag is denied. Final cutover still requires the approved release manifest.",
+  "chainId": 13370,
+  "packages": {
+    "reya-orders-gateway:1.1.4@router": {
+      "deploy": "QmS45cNvKNgRfiXbJt7BNsR6XncZmZJ5VGqGpPZEBxFdx3",
+      "misc": "QmWTPnVzi8JSfT6yujhDJ8jWXnav6P5PmaiptG6SLdurkr"
+    },
+    "reya-periphery:1.1.2@router": {
+      "deploy": "QmUg9zk164ofiZgyVUBYakqZtq2quNechMmgbwXAfWGssM",
+      "misc": "QmUoqGVmmUGhfRxNxHtVzMiucHLoEk4FcmAUEBSnEgcykL"
+    },
+    "reya-core:1.1.5@router": {
+      "deploy": "QmZKXpKt7PviRfTXTjYSpQ8epRzV5E6jEqFufk8DtxH4Fq",
+      "misc": "QmZZZ7fHPz8yhN2tuxxeti4XLnMPLXVmNQkvSNySpMLYkz"
+    },
+    "reya-instrument-passive-perp:1.1.4@router": {
+      "deploy": "QmcHvAQuLb52H2B5j7wYbUauzSKWoepAsGqrD97RtozGnm",
+      "misc": "QmZvTaczTYLuSGFEZbrw38GePQ93CcegGxdSV852LRe47W"
+    }
+  },
+  "sourceCommits": {
+    "core_passivePerp": "c05de623f929288ff639666b1c6525ab74d97b78",
+    "ordersGateway": "5eb104dbc05e76e33aa2ed12163b838dbba9d5c7",
+    "ordersGatewayBuild": "f30f2807c8445467ee924f70e7f54c43b8fdff29",
+    "periphery": "1b09e14698f2ab83f2ad9a4dd63d265bf0efde32"
+  }
+}

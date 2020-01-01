@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_70paxg_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market70PaxgId %>",
+    { riskMatrixIndex = "<%= settings.market70Paxg_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market70Paxg_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market70Paxg_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market70Paxg_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market70Paxg_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market70Paxg_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market70Paxg_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market70Paxg_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market70Paxg_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market70Paxg_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market70Paxg_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market70Paxg_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market70Paxg_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market70Paxg_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market70Paxg_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market70Paxg_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market70Paxg_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market70Paxg_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market70Paxg_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market70Paxg_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market70Paxg_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market70Paxg_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_70paxg",
+    "invoke.passive_perp_market_config_system_owner",
+]

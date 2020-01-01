@@ -1,0 +1,6 @@
+# Shared Perp OB router pins. Final cutover still requires the approved release manifest.
+[var.cannonClonePackages]
+coreRouterPackage = "reya-core:1.1.5@router"
+passivePerpRouterPackage = "reya-instrument-passive-perp:1.1.4@router"
+ordersGatewayRouterPackage = "reya-orders-gateway:1.1.4@router"
+peripheryRouterPackage = "reya-periphery:1.1.2@router"
