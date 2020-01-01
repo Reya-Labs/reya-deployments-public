@@ -1,0 +1,16 @@
+# PRO-1137, coordinated with PRO-1040: NOT included in the cutover graph.
+# Review against the published post-cutover omnibus; simulate before scheduling.
+include = [
+    "../../core/configs/deferred_global_collateral.toml",
+    "../../oracle_manager/configs/constants/zero.toml",
+    "../../collateral_pools/collateral_pool_1/tokens/deusd.toml",
+    "../../collateral_pools/collateral_pool_1/tokens/sdeusd.toml",
+]
+
+[var.zero_price_oracle_manager]
+zeroPriceOracleManager = "<%= settings.oracleManagerProxy %>"
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[var.cp_1rusd]
+cp1Rusd_deusdParentConfig_oracleNodeId = "<%= settings.zeroPriceNodeId %>"
+cp1Rusd_sdeusdParentConfig_oracleNodeId = "<%= settings.zeroPriceNodeId %>"

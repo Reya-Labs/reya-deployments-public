@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_51atom_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market51AtomId %>",
+    { riskMatrixIndex = "<%= settings.market51Atom_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market51Atom_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market51Atom_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market51Atom_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market51Atom_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market51Atom_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market51Atom_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market51Atom_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market51Atom_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market51Atom_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market51Atom_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market51Atom_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market51Atom_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market51Atom_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market51Atom_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market51Atom_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market51Atom_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market51Atom_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market51Atom_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market51Atom_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market51Atom_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market51Atom_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_51atom",
+    "invoke.passive_perp_market_config_system_owner",
+]

@@ -1,0 +1,156 @@
+# Devnet-only market 82 NVDA (perpOB). Same step sequence as the mirrored
+# markets (see market_70paxg.toml): create on PassivePerp, open and guard the
+# market's own collateral pool and market flag, configure, then merge into
+# CP1. The market configuration is inline because no other environment
+# registers this market. Parameters: [var.market_82nvda] in the devnet omnibus.
+#####################################
+# Create Market
+#####################################
+[invoke.create_market_82nvda]
+target = ["PassivePerpProxy"]
+abi = "<%= JSON.stringify(contracts.PassivePerpProxy.abi.concat({'type': 'event', 'name': 'MarketDataUpdatedV2', 'anonymous': false, 'inputs': [{'name': 'eventSequenceNumber', 'type': 'uint128', 'indexed': true, 'internalType': 'uint128'}, {'name': 'marketId', 'type': 'uint128', 'indexed': true, 'internalType': 'uint128'}, {'name': 'marketData', 'type': 'tuple', 'indexed': false, 'internalType': 'struct Market.Data', 'components': [{'name': 'id', 'type': 'uint128', 'internalType': 'uint128'}, {'name': 'passivePoolId_DEPRECATED', 'type': 'uint128', 'internalType': 'uint128'}, {'name': 'poolAccountId_DEPRECATED', 'type': 'uint128', 'internalType': 'uint128'}, {'name': 'quoteToken', 'type': 'address', 'internalType': 'address'}, {'name': 'quoteTokenDecimals', 'type': 'uint8', 'internalType': 'uint8'}, {'name': 'lastFundingVelocity_DEPRECATED', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'lastFundingRate_DEPRECATED', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'lastFundingTimestamp', 'type': 'uint256', 'internalType': 'uint256'}, {'name': 'lastMTM_DEPRECATED', 'type': 'tuple', 'internalType': 'struct PriceData', 'components': [{'name': 'price', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'timestamp', 'type': 'uint256', 'internalType': 'uint256'}]}, {'name': 'longTrackers', 'type': 'tuple', 'internalType': 'struct FundingAndADLTrackers', 'components': [{'name': 'fundingValue', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'baseMultiplier', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'adlUnwindPrice', 'type': 'uint256', 'internalType': 'UD60x18'}]}, {'name': 'shortTrackers', 'type': 'tuple', 'internalType': 'struct FundingAndADLTrackers', 'components': [{'name': 'fundingValue', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'baseMultiplier', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'adlUnwindPrice', 'type': 'uint256', 'internalType': 'UD60x18'}]}, {'name': 'openInterest', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'logPriceMultiplier_DEPRECATED', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'depthFactor_DEPRECATED', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'priceSpread_DEPRECATED', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'velocityMultiplier_DEPRECATED', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'markPrice', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'markPriceTimestamp', 'type': 'uint256', 'internalType': 'uint256'}, {'name': 'fundingRate', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'fundingRateTimestamp', 'type': 'uint256', 'internalType': 'uint256'}, {'name': 'lockedClosePrice', 'type': 'uint256', 'internalType': 'UD60x18'}]}, {'name': 'blockTimestamp', 'type': 'uint256', 'indexed': false, 'internalType': 'uint256'}]})) %>"
+fromCall.func = "owner"
+func = "createMarket"
+args = ["Market NVDA", "<%= settings.rusdProxyAddress %>"]
+var.market_82nvda.event = "MarketDataUpdatedV2"
+var.market_82nvda.arg = 1
+depends = [
+    "invoke.core_register_instrument_passive_perp",
+    "invoke.core_unpause",
+    "invoke.passive_perp_global_config",
+    "invoke.create_market_81amzn",
+]
+
+[var.market_82nvda_vars]
+market82NvdaId = "<%= (String(settings.market_82nvda) === '82') ? settings.market_82nvda : parseUnits('0', 'assert market_82nvda_vars failed') %>"
+depends = ["invoke.create_market_82nvda"]
+
+##################################################
+# Market's Collateral Pool Feature Flags
+##################################################
+[invoke.market_82nvda_unpause_cp]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market82NvdaId %>"]
+func = "setFeatureFlagAllowAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('collateralPoolEnabled')),settings.market82NvdaId])) %>",
+    true,
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_82nvda_vars"]
+
+[invoke.market_82nvda_set_pausers_cp]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market82NvdaId %>"]
+func = "setDeniers"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('collateralPoolEnabled')),settings.market82NvdaId])) %>",
+    [
+        "<%= settings.pauser1 %>",
+        "<%= settings.pauser2 %>",
+        "<%= settings.pauser3 %>",
+        "<%= settings.pauser4 %>",
+    ],
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_82nvda_vars"]
+
+##################################################
+# Market Feature Flags
+##################################################
+[invoke.market_82nvda_unpause_market]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagAllowAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market82NvdaId])) %>",
+    true,
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_82nvda_vars"]
+
+[invoke.market_82nvda_set_pausers_market]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setDeniers"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market82NvdaId])) %>",
+    [
+        "<%= settings.pauser1 %>",
+        "<%= settings.pauser2 %>",
+        "<%= settings.pauser3 %>",
+        "<%= settings.pauser4 %>",
+    ],
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_82nvda_vars"]
+
+#####################################
+# Market Configuration
+#####################################
+[invoke.market_82nvda_set_cp_limits]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market82NvdaId %>"]
+func = "setCollateralPoolLimits"
+args = [
+    "<%= settings.market82NvdaId %>",
+    { maxMarkets = "1", maxCollaterals = "1" },
+]
+depends = ["invoke.create_market_82nvda"]
+
+##################################################
+# Market's Collateral Pool Insurance Fund
+#
+# Required BEFORE the merge: CollateralPool.merge transfers the child's
+# insurance fund into the parent's, and getInsuranceFundAccount is
+# Account.exists(insuranceFundConfig().accountId) -- an unconfigured child
+# reverts AccountNotFound("0"). (The reserved account needs no step: Core sets
+# reservedAccountId when the pool is created.)
+##################################################
+[invoke.market_82nvda_insurance_fund_config]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market82NvdaId %>"]
+func = "configureCollateralPoolInsuranceFund"
+args = [
+    "<%= settings.market82NvdaId %>",
+    { accountId = "<%= settings.cp1Rusd_insuranceFundAccountId %>", liquidationFee = "<%= parseEther(settings.cp1Rusd_insuranceFund_liquidationFeeUnscaled) %>" },
+]
+depends = [
+    "invoke.cp_1rusd_create_insurance_fund_account",
+    "invoke.create_market_82nvda",
+]
+
+#####################################
+# Market Parameters
+#####################################
+[invoke.market_82nvda_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market82NvdaId %>",
+    { riskMatrixIndex = "<%= settings.market82Nvda_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market82Nvda_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market82Nvda_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market82Nvda_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market82Nvda_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market82Nvda_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market82Nvda_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market82Nvda_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market82Nvda_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market82Nvda_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market82Nvda_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market82Nvda_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market82Nvda_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market82Nvda_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market82Nvda_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market82Nvda_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market82Nvda_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market82Nvda_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market82Nvda_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market82Nvda_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market82Nvda_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market82Nvda_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_82nvda",
+    "invoke.passive_perp_market_config_system_owner",
+]
+
+##################################################
+# Merge Market's Collateral Pool into CP1
+##################################################
+[invoke.market_82nvda_merge_collateral_pool]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "mergeCollateralPools"
+args = ["<%= settings.market1EthId %>", "<%= settings.market82NvdaId %>"]
+depends = [
+    "invoke.market_1eth_set_cp_limits",
+    "invoke.market_82nvda_unpause_cp",
+    "invoke.market_82nvda_set_pausers_cp",
+    "invoke.market_82nvda_unpause_market",
+    "invoke.market_82nvda_set_pausers_market",
+    "invoke.market_82nvda_set_market_config",
+    "invoke.market_82nvda_set_cp_limits",
+    "invoke.market_82nvda_insurance_fund_config",
+]

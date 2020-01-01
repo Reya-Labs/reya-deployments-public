@@ -1,0 +1,15 @@
+include = [
+    "utils/deploy_proxy.toml",
+    "utils/upgrade_proxy.toml",
+    "configs/feature_flags.toml",
+    "configs/global_config_testnet.toml",
+    "configs/tokens-testnet/usdc.toml",
+    "configs/tokens-testnet/weth.toml",
+    "configs/tokens-testnet/wbtc.toml",
+    "configs/tokens-testnet/wsteth.toml",
+    "configs/tokens-testnet/usde.toml",
+    "configs/tokens-testnet/susde.toml",
+    "configs/tokens-testnet/deusd.toml",
+    "configs/tokens-testnet/sdeusd.toml",
+    "configs/tokens-testnet/reya.toml",
+]

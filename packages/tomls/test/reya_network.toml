@@ -1,0 +1,2 @@
+# Fork only: the standard omnibus, building the production economics.
+include = ["../src/omnibus/reya_network.toml"]

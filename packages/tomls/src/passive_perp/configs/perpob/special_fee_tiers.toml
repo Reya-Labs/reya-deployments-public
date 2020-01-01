@@ -1,0 +1,21 @@
+# Fee model V3 charges only takers. The maker fields are deprecated and inert, so both
+# tiers write them as zero.
+[invoke.passive_perp_set_tier100_parameters]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeeTierParameters"
+args = [
+    "100",
+    { takerFee = "<%= parseEther(settings.takerFeeTier100Unscaled) %>", makerFee_DEPRECATED = "0", makerRebate_DEPRECATED = "0" },
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]
+
+[invoke.passive_perp_set_tier101_parameters]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeeTierParameters"
+args = [
+    "101",
+    { takerFee = "<%= parseEther(settings.takerFeeTier101Unscaled) %>", makerFee_DEPRECATED = "0", makerRebate_DEPRECATED = "0" },
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]

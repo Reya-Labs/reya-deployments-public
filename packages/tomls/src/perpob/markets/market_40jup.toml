@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_40jup_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market40JupId %>",
+    { riskMatrixIndex = "<%= settings.market40Jup_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market40Jup_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market40Jup_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market40Jup_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market40Jup_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market40Jup_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market40Jup_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market40Jup_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market40Jup_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market40Jup_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market40Jup_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market40Jup_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market40Jup_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market40Jup_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market40Jup_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market40Jup_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market40Jup_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market40Jup_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market40Jup_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market40Jup_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market40Jup_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market40Jup_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_40jup",
+    "invoke.passive_perp_market_config_system_owner",
+]

@@ -1,0 +1,20 @@
+# The receipt is a 1:1 claim on one sUSDe, so it is priced by the shared sUSDe/USDC node.
+[invoke.cp_1rusd_set_rflow_config]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "setCollateralConfig"
+args = [
+    "<%= settings.cp1RusdId %>",
+    "<%= settings.rflowProxyAddress %>",
+    { depositingEnabled = true, cap = "<%= parseUnits(settings.rflowCap, parseInt(settings.rflowTokenDecimals)) %>", withdrawalWindowSize_DEPRECATED = "0", withdrawalTvlPercentageLimit_DEPRECATED = "0", autoExchangeThreshold = "<%= parseUnits(settings.rflowAutoExchangeThreshold, parseInt(settings.rflowTokenDecimals)) %>", autoExchangeInsuranceFee = "<%= parseEther(settings.rflowAutoExchangeInsuranceFee) %>", autoExchangeDustThreshold = "<%= parseUnits(settings.rflowAutoExchangeDustThreshold, parseInt(settings.rflowTokenDecimals)) %>", bidSubmissionFee = "<%= parseUnits(settings.rflowBidSubmissionFee, parseInt(settings.rflowTokenDecimals)) %>" },
+    { collateralAddress = "<%= settings.receiptQuoteToken %>", priceHaircut = "<%= parseEther(settings.rflowPriceHaircut) %>", autoExchangeDiscount = "<%= parseEther(settings.rflowAutoExchangeDiscount) %>", oracleNodeId = "<%= settings.susdeUsdcNodeIdStork %>" },
+]
+depends = [
+    "var.cp_1rusd_vars",
+    "invoke.cp_1rusd_set_rusd_config",
+    "invoke.rflow_global_collateral_config",
+    "invoke.core_configure_protocol",
+    "invoke.market_1eth_set_cp_limits",
+    "var.receipt_token_addresses",
+    "invoke.oracle_manager_susde_usdc_stork_max_stale_duration",
+]
