@@ -1,0 +1,11 @@
+# PRO-1040: compromised collateral remains registered but contributes no value.
+# The caller supplies the manager address after its deployment/upgrade, or an
+# existing manager for a fork overlay. All environments use this same node.
+[invoke.oracle_manager_register_node_zero]
+target = ["<%= settings.zeroPriceOracleManager %>"]
+abi = '[{"type":"function","name":"owner","inputs":[],"outputs":[{"type":"address"}],"stateMutability":"view"},{"type":"function","name":"registerNode","inputs":[{"name":"nodeType","type":"uint8"},{"name":"parameters","type":"bytes"},{"name":"parents","type":"bytes32[]"}],"outputs":[{"type":"bytes32"}],"stateMutability":"nonpayable"},{"type":"event","name":"NodeRegistered","inputs":[{"name":"nodeId","type":"bytes32","indexed":false},{"name":"nodeType","type":"uint8","indexed":false},{"name":"parameters","type":"bytes","indexed":false},{"name":"parents","type":"bytes32[]","indexed":false}],"anonymous":false}]'
+fromCall.func = "owner"
+func = "registerNode"
+args = ["3", "<%= defaultAbiCoder.encode(['uint256'], ['0']) %>", []]
+var.zeroPriceNodeId.event = "NodeRegistered"
+var.zeroPriceNodeId.arg = 0

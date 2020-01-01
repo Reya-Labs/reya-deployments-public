@@ -1,0 +1,106 @@
+# Second crypto relaunch cohort (completed 1.1.11): LINK, UNI, SUI, NEAR, ENA and PUMP.
+# Clear historical closure denials only after all six native configurations are ready.
+# Included by mainnet only. The executed BNB/DOGE/AAVE clears stay in mainnet_crypto_activation.toml.
+# API admission and UI publication remain separate rollout steps.
+
+[invoke.market_8link_clear_trading_denial]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagDenyAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market8LinkId])) %>",
+    false,
+]
+depends = [
+    "invoke.market_8link_set_market_config",
+    "invoke.market_11uni_set_market_config",
+    "invoke.market_12sui_set_market_config",
+    "invoke.market_29near_set_market_config",
+    "invoke.market_31ena_set_market_config",
+    "invoke.market_63pump_set_market_config",
+]
+
+[invoke.market_11uni_clear_trading_denial]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagDenyAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market11UniId])) %>",
+    false,
+]
+depends = [
+    "invoke.market_8link_set_market_config",
+    "invoke.market_11uni_set_market_config",
+    "invoke.market_12sui_set_market_config",
+    "invoke.market_29near_set_market_config",
+    "invoke.market_31ena_set_market_config",
+    "invoke.market_63pump_set_market_config",
+]
+
+[invoke.market_12sui_clear_trading_denial]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagDenyAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market12SuiId])) %>",
+    false,
+]
+depends = [
+    "invoke.market_8link_set_market_config",
+    "invoke.market_11uni_set_market_config",
+    "invoke.market_12sui_set_market_config",
+    "invoke.market_29near_set_market_config",
+    "invoke.market_31ena_set_market_config",
+    "invoke.market_63pump_set_market_config",
+]
+
+[invoke.market_29near_clear_trading_denial]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagDenyAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market29NearId])) %>",
+    false,
+]
+depends = [
+    "invoke.market_8link_set_market_config",
+    "invoke.market_11uni_set_market_config",
+    "invoke.market_12sui_set_market_config",
+    "invoke.market_29near_set_market_config",
+    "invoke.market_31ena_set_market_config",
+    "invoke.market_63pump_set_market_config",
+]
+
+[invoke.market_31ena_clear_trading_denial]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagDenyAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market31EnaId])) %>",
+    false,
+]
+depends = [
+    "invoke.market_8link_set_market_config",
+    "invoke.market_11uni_set_market_config",
+    "invoke.market_12sui_set_market_config",
+    "invoke.market_29near_set_market_config",
+    "invoke.market_31ena_set_market_config",
+    "invoke.market_63pump_set_market_config",
+]
+
+[invoke.market_63pump_clear_trading_denial]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagDenyAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market63PumpId])) %>",
+    false,
+]
+depends = [
+    "invoke.market_8link_set_market_config",
+    "invoke.market_11uni_set_market_config",
+    "invoke.market_12sui_set_market_config",
+    "invoke.market_29near_set_market_config",
+    "invoke.market_31ena_set_market_config",
+    "invoke.market_63pump_set_market_config",
+]

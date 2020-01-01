@@ -1,0 +1,249 @@
+# Market 95 LIT: a new crypto market (not a relaunch), shared by mainnet (completed 1.1.11)
+# and devnet (completed 1.1.14). Each omnibus supplies the [var.market_95lit] settings,
+# including market95Lit_quoteToken, because rUSD has a different address per chain.
+#
+# Shape: MEGA's (market 75) Stork mark nodes -- LITUSDMARK divided by USDCUSD, since Stork
+# publishes LIT in USD -- plus #574's create/flags/merge/config steps and the 1x1 risk
+# block every new market gets. Admission stays off-chain (launch policy, ME books), as for
+# markets 88-94. Alt action plan (20 Oct 2026): 15x, cap 79,000 LIT, min 4, step 1, tick 0.0001.
+
+#####################################
+# Oracle: LIT/USD mark (Stork) and LIT/USDC (divided by USDC/USD)
+#####################################
+[invoke.oracle_manager_register_node_lit_usd_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_STORK_OFFCHAIN_LOOKUP %>",
+    "<%= defaultAbiCoder.encode(['address','string'], [contracts.OracleAdaptersProxy.address, settings.storkAssetPairIdLITMark]) %>",
+    [
+    ],
+]
+var.litUsdMarkNodeIdStork.event = "NodeRegistered"
+var.litUsdMarkNodeIdStork.arg = 0
+depends = ["invoke.upgrade_oracle_manager_proxy"]
+
+[invoke.oracle_manager_lit_usd_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.litUsdMarkNodeIdStork %>",
+    "<%= settings.litUsdMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_lit_usd_mark_stork"]
+
+[invoke.oracle_manager_register_node_lit_usdc_mark_stork]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "registerNode"
+args = [
+    "<%= settings.ORACLE_MANAGER_NODE_TYPE_DIV_REDUCER %>",
+    "0x",
+    [
+        "<%= settings.litUsdMarkNodeIdStork %>",
+        "<%= settings.usdcUsdNodeIdStork %>",
+    ],
+]
+var.litUsdcMarkNodeIdStork.event = "NodeRegistered"
+var.litUsdcMarkNodeIdStork.arg = 0
+depends = ["invoke.oracle_manager_lit_usd_mark_stork_max_stale_duration"]
+
+[invoke.oracle_manager_lit_usdc_mark_stork_max_stale_duration]
+target = ["OracleManagerProxy"]
+fromCall.func = "owner"
+func = "setMaxStaleDuration"
+args = [
+    "<%= settings.litUsdcMarkNodeIdStork %>",
+    "<%= settings.litUsdcMarkMaxStaleDurationStork %>",
+]
+depends = ["invoke.oracle_manager_register_node_lit_usdc_mark_stork"]
+
+#####################################
+# Create Market
+#####################################
+[invoke.create_market_95lit]
+target = ["PassivePerpProxy"]
+abi = "<%= JSON.stringify(contracts.PassivePerpProxy.abi.concat({'type': 'event', 'name': 'MarketDataUpdatedV2', 'anonymous': false, 'inputs': [{'name': 'eventSequenceNumber', 'type': 'uint128', 'indexed': true, 'internalType': 'uint128'}, {'name': 'marketId', 'type': 'uint128', 'indexed': true, 'internalType': 'uint128'}, {'name': 'marketData', 'type': 'tuple', 'indexed': false, 'internalType': 'struct Market.Data', 'components': [{'name': 'id', 'type': 'uint128', 'internalType': 'uint128'}, {'name': 'passivePoolId_DEPRECATED', 'type': 'uint128', 'internalType': 'uint128'}, {'name': 'poolAccountId_DEPRECATED', 'type': 'uint128', 'internalType': 'uint128'}, {'name': 'quoteToken', 'type': 'address', 'internalType': 'address'}, {'name': 'quoteTokenDecimals', 'type': 'uint8', 'internalType': 'uint8'}, {'name': 'lastFundingVelocity_DEPRECATED', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'lastFundingRate_DEPRECATED', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'lastFundingTimestamp', 'type': 'uint256', 'internalType': 'uint256'}, {'name': 'lastMTM_DEPRECATED', 'type': 'tuple', 'internalType': 'struct PriceData', 'components': [{'name': 'price', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'timestamp', 'type': 'uint256', 'internalType': 'uint256'}]}, {'name': 'longTrackers', 'type': 'tuple', 'internalType': 'struct FundingAndADLTrackers', 'components': [{'name': 'fundingValue', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'baseMultiplier', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'adlUnwindPrice', 'type': 'uint256', 'internalType': 'UD60x18'}]}, {'name': 'shortTrackers', 'type': 'tuple', 'internalType': 'struct FundingAndADLTrackers', 'components': [{'name': 'fundingValue', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'baseMultiplier', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'adlUnwindPrice', 'type': 'uint256', 'internalType': 'UD60x18'}]}, {'name': 'openInterest', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'logPriceMultiplier_DEPRECATED', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'depthFactor_DEPRECATED', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'priceSpread_DEPRECATED', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'velocityMultiplier_DEPRECATED', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'markPrice', 'type': 'uint256', 'internalType': 'UD60x18'}, {'name': 'markPriceTimestamp', 'type': 'uint256', 'internalType': 'uint256'}, {'name': 'fundingRate', 'type': 'int256', 'internalType': 'SD59x18'}, {'name': 'fundingRateTimestamp', 'type': 'uint256', 'internalType': 'uint256'}, {'name': 'lockedClosePrice', 'type': 'uint256', 'internalType': 'UD60x18'}]}, {'name': 'blockTimestamp', 'type': 'uint256', 'indexed': false, 'internalType': 'uint256'}]})) %>"
+fromCall.func = "owner"
+func = "createMarket"
+args = ["Market LIT", "<%= settings.market95Lit_quoteToken %>"]
+var.market_95lit.event = "MarketDataUpdatedV2"
+var.market_95lit.arg = 1
+depends = [
+    "invoke.core_register_instrument_passive_perp",
+    "invoke.core_unpause",
+    "invoke.passive_perp_global_config",
+    "invoke.create_market_94mstr",
+]
+
+[var.market_95lit_vars]
+market95LitId = "<%= (String(settings.market_95lit) === '95') ? settings.market_95lit : parseUnits('0', 'assert market_95lit_vars failed') %>"
+depends = ["invoke.create_market_95lit"]
+
+##################################################
+# Market's Collateral Pool Feature Flags
+##################################################
+[invoke.market_95lit_unpause_cp]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market95LitId %>"]
+func = "setFeatureFlagAllowAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('collateralPoolEnabled')),settings.market95LitId])) %>",
+    true,
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_95lit_vars"]
+
+[invoke.market_95lit_set_pausers_cp]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market95LitId %>"]
+func = "setDeniers"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('collateralPoolEnabled')),settings.market95LitId])) %>",
+    [
+        "<%= settings.pauser1 %>",
+        "<%= settings.pauser2 %>",
+        "<%= settings.pauser3 %>",
+        "<%= settings.pauser4 %>",
+    ],
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_95lit_vars"]
+
+##################################################
+# Market Feature Flags
+##################################################
+[invoke.market_95lit_unpause_market]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagAllowAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market95LitId])) %>",
+    true,
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_95lit_vars"]
+
+[invoke.market_95lit_set_pausers_market]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setDeniers"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market95LitId])) %>",
+    [
+        "<%= settings.pauser1 %>",
+        "<%= settings.pauser2 %>",
+        "<%= settings.pauser3 %>",
+        "<%= settings.pauser4 %>",
+    ],
+]
+depends = ["invoke.upgrade_core_proxy", "var.market_95lit_vars"]
+
+#####################################
+# Market Configuration
+#####################################
+[invoke.market_95lit_set_cp_limits]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market95LitId %>"]
+func = "setCollateralPoolLimits"
+args = [
+    "<%= settings.market95LitId %>",
+    { maxMarkets = "1", maxCollaterals = "1" },
+]
+depends = ["invoke.create_market_95lit"]
+
+##################################################
+# Market's Collateral Pool Insurance Fund
+#
+# Required BEFORE the merge: CollateralPool.merge transfers the child's
+# insurance fund into the parent's, and getInsuranceFundAccount is
+# Account.exists(insuranceFundConfig().accountId) -- an unconfigured child
+# reverts AccountNotFound("0"). (The reserved account needs no step: Core sets
+# reservedAccountId when the pool is created.)
+##################################################
+[invoke.market_95lit_insurance_fund_config]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.market95LitId %>"]
+func = "configureCollateralPoolInsuranceFund"
+args = [
+    "<%= settings.market95LitId %>",
+    { accountId = "<%= settings.cp1Rusd_insuranceFundAccountId %>", liquidationFee = "<%= parseEther(settings.cp1Rusd_insuranceFund_liquidationFeeUnscaled) %>" },
+]
+depends = [
+    "invoke.cp_1rusd_create_insurance_fund_account",
+    "invoke.create_market_95lit",
+]
+
+#####################################
+# Market Parameters
+#####################################
+[invoke.market_95lit_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market95LitId %>",
+    { riskMatrixIndex = "<%= settings.market95Lit_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market95Lit_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market95Lit_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market95Lit_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market95Lit_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market95Lit_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market95Lit_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market95Lit_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market95Lit_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market95Lit_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market95Lit_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market95Lit_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market95Lit_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market95Lit_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market95Lit_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market95Lit_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market95Lit_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market95Lit_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market95Lit_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market95Lit_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market95Lit_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market95Lit_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_95lit",
+    "invoke.passive_perp_market_config_system_owner",
+]
+
+##################################################
+# Merge Market's Collateral Pool into CP1
+##################################################
+[invoke.market_95lit_merge_collateral_pool]
+target = ["CoreProxy"]
+fromCall.func = "owner"
+func = "mergeCollateralPools"
+args = ["<%= settings.market1EthId %>", "<%= settings.market95LitId %>"]
+depends = [
+    "invoke.market_1eth_set_cp_limits",
+    "invoke.market_95lit_unpause_cp",
+    "invoke.market_95lit_set_pausers_cp",
+    "invoke.market_95lit_unpause_market",
+    "invoke.market_95lit_set_pausers_market",
+    "invoke.market_95lit_set_market_config",
+    "invoke.market_95lit_set_cp_limits",
+    "invoke.market_95lit_insurance_fund_config",
+]
+
+##################################################
+# Risk: own 1x1 block in CP1. The block id is captured from the event: on devnet, 1.1.14's new
+# PUMP block and this one take the next two ids in build order, so neither equals its market id.
+##################################################
+[invoke.cp_1rusd_create_risk_matrix_market_95lit]
+target = ["CoreProxy"]
+abi = "<%= JSON.stringify(contracts.CoreProxy.abi.concat({'type':'event','name':'RiskMatrixCreation','inputs':[{'name':'collateralPoolId','type':'uint128','indexed':true,'internalType':'uint128'},{'name':'riskBlockId','type':'uint256','indexed':true,'internalType':'uint256'},{'name':'riskMatrix','type':'int64[][]','indexed':false,'internalType':'SD1x18[][]'},{'name':'blockTimestamp','type':'uint256','indexed':false,'internalType':'uint256'}],'anonymous':false})) %>"
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.cp1RusdId %>"]
+func = "createRiskMatrix"
+var.cp1RusdMarket95LitRiskBlockId.event = "RiskMatrixCreation"
+var.cp1RusdMarket95LitRiskBlockId.arg = 1
+args = [
+    "<%= settings.cp1RusdId %>",
+    [
+        [
+            "<%= parseEther(settings.cp1Rusd_market95Lit_riskMatrix00Unscaled) %>",
+        ],
+    ],
+]
+depends = ["var.cp_1rusd_vars", "invoke.market_95lit_merge_collateral_pool"]
+
+[invoke.cp_1rusd_set_risk_block_id_market_95lit]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setRiskBlockId"
+args = [
+    "<%= settings.market95LitId %>",
+    "<%= settings.cp1RusdMarket95LitRiskBlockId %>",
+    "<%= settings.market95Lit_riskMatrixIndex %>",
+]
+depends = [
+    "invoke.cp_1rusd_create_risk_matrix_market_95lit",
+    "invoke.passive_perp_risk_block_config_system_owner",
+]

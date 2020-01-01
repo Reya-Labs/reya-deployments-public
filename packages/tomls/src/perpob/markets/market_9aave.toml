@@ -1,0 +1,13 @@
+# Native market configuration shared by mainnet, Cronos and devnet.
+[invoke.market_9aave_set_market_config]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setMarketConfiguration"
+args = [
+    "<%= settings.market9AaveId %>",
+    { riskMatrixIndex = "<%= settings.market9Aave_riskMatrixIndex %>", maxOpenBase = "<%= parseEther(settings.market9Aave_maxOpenBaseUnscaled) %>", velocityMultiplier_DEPRECATED = "<%= parseEther(settings.market9Aave_velocityMultiplierUnscaled) %>", oracleNodeId = "<%= settings.market9Aave_oracleNodeId %>", mtmWindow_DEPRECATED = "<%= settings.market9Aave_mtmWindow %>", dutchConfig = { lambda = "<%= parseEther(settings.market9Aave_dutchConfig_lambdaUnscaled) %>", minBase = "<%= parseEther(settings.market9Aave_dutchConfig_minBaseUnscaled) %>" }, slippageParams = { phi = "<%= parseEther(settings.market9Aave_slippageParams_phiUnscaled) %>", beta = "<%= parseEther(settings.market9Aave_slippageParams_betaUnscaled) %>" }, minimumOrderBase = "<%= parseEther(settings.market9Aave_minimumOrderBaseUnscaled) %>", baseSpacing = "<%= parseEther(settings.market9Aave_baseSpacingUnscaled) %>", priceSpacing = "<%= parseEther(settings.market9Aave_priceSpacingUnscaled) %>", depthFactor_DEPRECATED = "<%= parseEther(settings.market9Aave_depthFactorUnscaled) %>", maxExposureFactor_DEPRECATED = "<%= parseEther(settings.market9Aave_maxExposureFactorUnscaled) %>", maxPSlippage_DEPRECATED = "<%= parseEther(settings.market9Aave_maxPSlippageUnscaled) %>", markPriceMaxStaleDuration = "<%= settings.market9Aave_markPriceMaxStaleDuration %>", priceSpread_DEPRECATED = "<%= parseEther(settings.market9Aave_priceSpreadUnscaled) %>", volatilityIndexMultiplier_DEPRECATED = "<%= parseEther(settings.market9Aave_volatilityIndexMultiplierUnscaled) %>", fundingRateMaxStaleDuration = "<%= settings.market9Aave_fundingRateMaxStaleDuration %>", markPriceMaxDeviation = "<%= parseEther(settings.market9Aave_markPriceMaxDeviationUnscaled) %>", fillPriceMaxDeviation = "<%= parseEther(settings.market9Aave_fillPriceMaxDeviationUnscaled) %>", minFundingInterval = "<%= settings.market9Aave_minFundingInterval %>" },
+]
+depends = [
+    "invoke.create_market_9aave",
+    "invoke.passive_perp_market_config_system_owner",
+]

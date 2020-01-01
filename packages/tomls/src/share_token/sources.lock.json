@@ -1,0 +1,14 @@
+{
+  "description": "Published share-token artifacts used by the standard environment fork suites. Local registry only; no publication.",
+  "chainId": 13370,
+  "packages": {
+    "reya-share-tokens:1.0.0@proxy": {
+      "deploy": "QmaDQpWx4WWPxff9pPyrjGGh1GYEUr2ANQ3WSeqsdMZsRV",
+      "misc": "QmRk85h6TDfPDGgCsPVX4GDq51mK7SJ6mnB7Eh1TFwqjyB"
+    },
+    "reya-share-tokens:1.0.2@router": {
+      "deploy": "Qmb5cZ8nm9FW5R1yDPmE11rK7n7SJRcQTVHa3cYxzTTZgi",
+      "misc": "QmTEyMEPhk4N3pGsUBQ1DP5W3DwmBzXhBUBCSWoX3ZiBYH"
+    }
+  }
+}

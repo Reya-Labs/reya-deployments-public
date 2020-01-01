@@ -1,0 +1,44 @@
+# Clear historical closure denials only after all three native configurations are ready.
+# Included by mainnet only. API admission and UI publication remain separate rollout steps.
+
+[invoke.market_9aave_clear_trading_denial]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagDenyAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market9AaveId])) %>",
+    false,
+]
+depends = [
+    "invoke.market_9aave_set_market_config",
+    "invoke.market_20doge_set_market_config",
+    "invoke.market_24bnb_set_market_config",
+]
+
+[invoke.market_20doge_clear_trading_denial]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagDenyAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market20DogeId])) %>",
+    false,
+]
+depends = [
+    "invoke.market_9aave_set_market_config",
+    "invoke.market_20doge_set_market_config",
+    "invoke.market_24bnb_set_market_config",
+]
+
+[invoke.market_24bnb_clear_trading_denial]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeatureFlagDenyAll"
+args = [
+    "<%= keccak256(defaultAbiCoder.encode(['bytes32','uint128'],[keccak256(hexlify('marketEnabled')),settings.market24BnbId])) %>",
+    false,
+]
+depends = [
+    "invoke.market_9aave_set_market_config",
+    "invoke.market_20doge_set_market_config",
+    "invoke.market_24bnb_set_market_config",
+]

@@ -1,0 +1,23 @@
+# RET-245 Wave 1 ladder: tiers 7 and 8 extend the regular 0-6 schedule.
+# Shared by mainnet and its devnet mirror. Cronos keeps the 0-6 ladder, so these steps
+# stay out of regular_fee_tiers.toml, which Cronos also includes.
+# Maker fields are deprecated and inert under Fee V3, zero as on every tier.
+[invoke.passive_perp_set_tier7_parameters]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeeTierParameters"
+args = [
+    "7",
+    { takerFee = "<%= parseEther(settings.takerFeeTier7Unscaled) %>", makerFee_DEPRECATED = "0", makerRebate_DEPRECATED = "0" },
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]
+
+[invoke.passive_perp_set_tier8_parameters]
+target = ["PassivePerpProxy"]
+fromCall.func = "owner"
+func = "setFeeTierParameters"
+args = [
+    "8",
+    { takerFee = "<%= parseEther(settings.takerFeeTier8Unscaled) %>", makerFee_DEPRECATED = "0", makerRebate_DEPRECATED = "0" },
+]
+depends = ["invoke.upgrade_passive_perp_proxy"]
