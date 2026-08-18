@@ -1,0 +1,30 @@
+[profile.default]
+allow_paths = ["../", "../../", "./", "../node_modules/"]
+auto_detect_solc = false
+evm_version = "shanghai" # older version mismatch w/ solidity > 8.20
+fuzz = { runs = 256, max_test_rejects = 1_000_000 }
+libs = ["../../node_modules"]
+optimizer = true
+optimizer_runs = 10_000
+out = "out"
+solc = "0.8.19"
+src = "src"
+test = "test"
+auto_detect_remappings = false
+fs_permissions = [{ access = "read", path = "./"}]
+gas_limit = "18446744073709551615" # u64::MAX
+
+[profile.ci]
+fuzz = { runs = 100, max_test_rejects = 100_000 }
+verbosity = 2
+
+[fmt]
+  bracket_spacing = true
+  int_types = "long"
+  line_length = 120
+  multiline_func_header = "all"
+  number_underscore = "thousands"
+  quote_style = "double"
+  tab_width = 4
+  wrap_comments = true
+  ignore = ['./src/interfaces/*']

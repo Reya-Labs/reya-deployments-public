@@ -1,0 +1,394 @@
+pragma solidity >=0.8.19 <0.9.0;
+
+import { BaseReyaForkTest } from "../BaseReyaForkTest.sol";
+import { ITokenProxy } from "../../../src/interfaces/ITokenProxy.sol";
+import { ICoreProxy, CollateralInfo, MarginInfo, Command as Command_Core } from "../../../src/interfaces/ICoreProxy.sol";
+import {
+    IPassivePerpProxy,
+    GlobalFeeParameters,
+    CacheStatus,
+    MarketConfigurationData
+} from "../../../src/interfaces/IPassivePerpProxy.sol";
+
+import { sd, SD59x18, UNIT as ONE_sd } from "@prb/math/SD59x18.sol";
+import { ud, UD60x18 } from "@prb/math/UD60x18.sol";
+
+contract OrderForkCheck is BaseReyaForkTest {
+    int256 private constant BASIC_TIER_FEE_PERCENTAGE = 0.0003e18;
+
+    function getMarketZeroFeesFeatureFlagId(uint128 marketId) internal pure returns (bytes32) {
+        return keccak256(abi.encode(keccak256(bytes("marketZeroFees")), marketId));
+    }
+
+    function getExchangeZeroFeesFeatureFlagId(uint128 exchangeId) internal pure returns (bytes32) {
+        return keccak256(abi.encode(keccak256(bytes("exchangeZeroFees")), exchangeId));
+    }
+
+    function getFeeConfigFeatureFlagId() internal pure returns (bytes32) {
+        return keccak256(bytes("configureFees"));
+    }
+
+    function check_MatchOrder_Fees(uint128 marketId) internal {
+        removeMarketsOILimit();
+        mockFreshPrices();
+
+        vm.prank(sec.setMarketZeroFeeBot);
+        IPassivePerpProxy(sec.perp).setFeatureFlagAllowAll(getMarketZeroFeesFeatureFlagId(marketId), false);
+
+        (address user,) = makeAddrAndKey("user");
+        uint256 amount = 1_000_000e6;
+        SD59x18 base = sd(1e18);
+        UD60x18 priceLimit = ud(1_000_000e18);
+
+        // deposit new margin account
+        uint128 accountId = depositNewMA(user, sec.usdc, amount);
+
+        CollateralInfo memory preOrderBalance = ICoreProxy(sec.core).getCollateralInfo(accountId, sec.rusd);
+
+        (UD60x18 orderPrice,) = executeCoreMatchOrder({
+            marketId: marketId,
+            sender: user,
+            base: base,
+            priceLimit: priceLimit,
+            accountId: accountId
+        });
+
+        CollateralInfo memory postOrderBalance = ICoreProxy(sec.core).getCollateralInfo(accountId, sec.rusd);
+
+        int256 expectedFees = orderPrice.intoSD59x18().mul(base).mul(sd(BASIC_TIER_FEE_PERCENTAGE)).unwrap() / 1e12;
+        int256 paidFees = preOrderBalance.realBalance - postOrderBalance.realBalance;
+        assertApproxEqAbs(paidFees, expectedFees, 0.01e6);
+    }
+
+    function check_MatchOrder_FeeDiscounts(uint128 marketId, bool ogDiscount, bool vltzDiscount) internal {
+        removeMarketsOILimit();
+        mockFreshPrices();
+
+        IPassivePerpProxy perp = IPassivePerpProxy(sec.perp);
+
+        (address bot,) = makeAddrAndKey("bot");
+
+        vm.prank(sec.multisig);
+        perp.addToFeatureFlagAllowlist(getFeeConfigFeatureFlagId(), bot);
+
+        (address user,) = makeAddrAndKey("userFeeDiscounts");
+        uint256 amount = 1_000_000e6;
+        SD59x18 base = sd(1e18);
+        UD60x18 priceLimit = ud(1_000_000e18);
+
+        // deposit new margin account
+        uint128 accountId = depositNewMA(user, sec.usdc, amount);
+
+        GlobalFeeParameters memory config = perp.getGlobalFeeParameters();
+        config.ogDiscount = ogDiscount ? 0.2e18 : 0;
+        config.vltzDiscount = vltzDiscount ? 0.1e18 : 0;
+        vm.prank(sec.multisig);
+        perp.setGlobalFeeParameters(config);
+
+        vm.prank(bot);
+        perp.setAccountOwnerVltzStatusFeeConfig(user, true);
+        vm.prank(bot);
+        perp.setAccountOwnerOgStatusFeeConfig(user, true);
+
+        CollateralInfo memory preOrderBalance = ICoreProxy(sec.core).getCollateralInfo(accountId, sec.rusd);
+
+        (UD60x18 orderPrice,) = executeCoreMatchOrder({
+            marketId: marketId,
+            sender: user,
+            base: base,
+            priceLimit: priceLimit,
+            accountId: accountId
+        });
+
+        CollateralInfo memory postOrderBalance = ICoreProxy(sec.core).getCollateralInfo(accountId, sec.rusd);
+        SD59x18 fee = sd(BASIC_TIER_FEE_PERCENTAGE).mul(ONE_sd.sub(sd(int256(config.ogDiscount)))).mul(
+            ONE_sd.sub(sd(int256(config.vltzDiscount)))
+        );
+
+        int256 expectedFees = orderPrice.intoSD59x18().mul(base).mul(fee).unwrap() / 1e12;
+        int256 paidFees = preOrderBalance.realBalance - postOrderBalance.realBalance;
+        assertApproxEqAbs(paidFees, expectedFees, 0.001e6);
+    }
+
+    function check_MatchOrder_ZeroFees(uint128 marketId) internal {
+        removeMarketsOILimit();
+        mockFreshPrices();
+
+        vm.prank(sec.setMarketZeroFeeBot);
+        IPassivePerpProxy(sec.perp).setFeatureFlagAllowAll(getMarketZeroFeesFeatureFlagId(marketId), true);
+
+        (address user,) = makeAddrAndKey("user");
+        uint256 amount = 1_000_000e6;
+        SD59x18 base = sd(1e18);
+        UD60x18 priceLimit = ud(1_000_000e18);
+
+        // deposit new margin account
+        uint128 accountId = depositNewMA(user, sec.usdc, amount);
+
+        CollateralInfo memory preOrderBalance = ICoreProxy(sec.core).getCollateralInfo(accountId, sec.rusd);
+
+        executeCoreMatchOrder({
+            marketId: marketId,
+            sender: user,
+            base: base,
+            priceLimit: priceLimit,
+            accountId: accountId
+        });
+
+        CollateralInfo memory postOrderBalance = ICoreProxy(sec.core).getCollateralInfo(accountId, sec.rusd);
+
+        int256 paidFees = preOrderBalance.realBalance - postOrderBalance.realBalance;
+        assertEq(paidFees, 0);
+    }
+
+    function check_ExchangeMatchOrder_ZeroFees() internal {
+        removeMarketsOILimit();
+        mockFreshPrices();
+
+        vm.prank(sec.setMarketZeroFeeBot);
+        IPassivePerpProxy(sec.perp).setFeatureFlagAllowAll(getExchangeZeroFeesFeatureFlagId(1), true);
+
+        (address user,) = makeAddrAndKey("user");
+        uint256 amount = 1_000_000e6;
+        SD59x18 base = sd(1e18);
+        UD60x18 priceLimit = ud(1_000_000e18);
+
+        // deposit new margin account
+        uint128 accountId = depositNewMA(user, sec.usdc, amount);
+
+        {
+            CollateralInfo memory preOrderBalance = ICoreProxy(sec.core).getCollateralInfo(accountId, sec.rusd);
+
+            executeCoreMatchOrder({ marketId: 1, sender: user, base: base, priceLimit: priceLimit, accountId: accountId });
+
+            CollateralInfo memory postOrderBalance = ICoreProxy(sec.core).getCollateralInfo(accountId, sec.rusd);
+
+            int256 paidFees = preOrderBalance.realBalance - postOrderBalance.realBalance;
+            assertEq(paidFees, 0);
+        }
+
+        {
+            CollateralInfo memory preOrderBalance = ICoreProxy(sec.core).getCollateralInfo(accountId, sec.rusd);
+
+            executeCoreMatchOrder({ marketId: 2, sender: user, base: base, priceLimit: priceLimit, accountId: accountId });
+
+            CollateralInfo memory postOrderBalance = ICoreProxy(sec.core).getCollateralInfo(accountId, sec.rusd);
+
+            int256 paidFees = preOrderBalance.realBalance - postOrderBalance.realBalance;
+            assertEq(paidFees, 0);
+        }
+    }
+
+    function check_MatchOrder_CachedPoolNodeMarginInfo() internal {
+        removeMarketsOILimit();
+        mockFreshPrices();
+
+        uint256 maxCacheDuration =
+            IPassivePerpProxy(sec.perp).getMaxCacheDurationForPoolNodeMarginInfo(sec.passivePoolAccountId, sec.rusd);
+        assertEq(maxCacheDuration, 60);
+
+        (address user,) = makeAddrAndKey("user");
+        uint256 amount = 1_000_000e6;
+        SD59x18 base = sd(1e18);
+        UD60x18 priceLimit = ud(1_000_000e18);
+
+        // deposit new margin account
+        uint128 accountId = depositNewMA(user, sec.usdc, amount);
+
+        // this order should cache the node margin info
+        vm.warp(block.timestamp + 60);
+        mockFreshPrices();
+
+        MarginInfo memory preOrderPoolNodeMarginInfo =
+            ICoreProxy(sec.core).getNodeMarginInfo(sec.passivePoolAccountId, sec.rusd);
+        executeCoreMatchOrder({ marketId: 1, sender: user, base: base, priceLimit: priceLimit, accountId: accountId });
+
+        (CacheStatus status, MarginInfo memory postOrderPoolNodeMarginInfo) =
+            IPassivePerpProxy(sec.perp).getCachedPoolNodeMarginInfoOrFetch(sec.passivePoolAccountId, sec.rusd);
+
+        assertEq(status, CacheStatus.VALID);
+        assertEq(postOrderPoolNodeMarginInfo, preOrderPoolNodeMarginInfo);
+
+        vm.warp(block.timestamp + 59);
+        mockFreshPrices();
+
+        vm.expectCall(sec.core, abi.encodeWithSelector(ICoreProxy(sec.core).getNodeMarginInfo.selector), 0);
+
+        uint256 secondMatchOrderGas = gasleft();
+        executeCoreMatchOrder({ marketId: 2, sender: user, base: base, priceLimit: priceLimit, accountId: accountId });
+        secondMatchOrderGas = secondMatchOrderGas - gasleft();
+
+        assertLe(secondMatchOrderGas, 3_000_000);
+
+        assertEq(status, CacheStatus.VALID);
+        assertEq(postOrderPoolNodeMarginInfo, preOrderPoolNodeMarginInfo);
+    }
+
+    function check_MatchOrder_Spread(uint128 marketId, uint256 precision) internal {
+        removeMarketsOILimit();
+        mockFreshPrices();
+
+        (address bot,) = makeAddrAndKey("bot");
+        (address user,) = makeAddrAndKey("user");
+
+        // set market level price spread to a large value (100bp)
+        uint256 priceSpread = 0.01e18;
+        vm.startPrank(sec.multisig);
+        IPassivePerpProxy(sec.perp).addToFeatureFlagAllowlist(keccak256(bytes("configureSpread")), sec.multisig);
+        IPassivePerpProxy(sec.perp).setMarketConfigurationSpread(marketId, priceSpread);
+        vm.stopPrank();
+
+        // set fee parameters
+
+        GlobalFeeParameters memory config = IPassivePerpProxy(sec.perp).getGlobalFeeParameters();
+        config.spreadDiscount = 1e18;
+        vm.prank(sec.multisig);
+        IPassivePerpProxy(sec.perp).setGlobalFeeParameters(config);
+
+        vm.prank(sec.multisig);
+        IPassivePerpProxy(sec.perp).addToFeatureFlagAllowlist(getFeeConfigFeatureFlagId(), bot);
+
+        uint256 amount = 1_000_000e6;
+        SD59x18 base = sd(1e18);
+        SD59x18 reverseBase = sd(-1e18);
+        UD60x18 priceLimit = ud(1_000_000e18);
+
+        // deposit new margin account
+        uint128 accountId = depositNewMA(user, sec.usdc, amount);
+
+        // execute without spread discount
+        // note, setting to false is redundunt but doing for test
+        vm.prank(bot);
+        IPassivePerpProxy(sec.perp).setAccountOwnerSpreadDiscountStatusFeeConfig(user, false);
+
+        (UD60x18 orderPrice,) = executeCoreMatchOrder({
+            marketId: marketId,
+            sender: user,
+            base: base,
+            priceLimit: priceLimit,
+            accountId: accountId
+        });
+
+        // reverse the trade
+        executeCoreMatchOrder({
+            marketId: marketId,
+            sender: user,
+            base: reverseBase,
+            priceLimit: ud(0),
+            accountId: accountId
+        });
+
+        // execute with spread discount
+        vm.prank(bot);
+        IPassivePerpProxy(sec.perp).setAccountOwnerSpreadDiscountStatusFeeConfig(user, true);
+
+        (UD60x18 orderPrice2,) = executeCoreMatchOrder({
+            marketId: marketId,
+            sender: user,
+            base: base,
+            priceLimit: priceLimit,
+            accountId: accountId
+        });
+
+        uint256 orderPrice2WithSpread =
+            orderPrice2.mul(ONE_sd.add(SD59x18.wrap(int256(priceSpread))).intoUD60x18()).unwrap();
+        assertApproxEqAbs(orderPrice.unwrap(), orderPrice2WithSpread, precision);
+    }
+
+    function check_MatchOrder_GasCost(uint128 marketId, uint256 maxGas, uint256 maxGasClose) internal {
+        removeMarketsOILimit();
+        mockFreshPrices();
+
+        (address user,) = makeAddrAndKey("user");
+        uint256 amount = 1_000_000e6;
+        SD59x18 base = sd(1e18);
+        UD60x18 priceLimit = ud(1_000_000e18);
+
+        uint128 accountId = depositNewMA(user, sec.usdc, amount);
+
+        uint256 gasBefore = gasleft();
+        executeCoreMatchOrder({
+            marketId: marketId,
+            sender: user,
+            base: base,
+            priceLimit: priceLimit,
+            accountId: accountId
+        });
+        uint256 gasUsed = gasBefore - gasleft();
+
+        emit log_named_uint("Open trade gas cost", gasUsed);
+        assertLt(gasUsed, maxGas, "Open trade gas cost exceeds ceiling");
+
+        gasBefore = gasleft();
+        executeCoreMatchOrder({
+            marketId: marketId,
+            sender: user,
+            base: sd(-1e18),
+            priceLimit: ud(0),
+            accountId: accountId
+        });
+        uint256 gasUsedClose = gasBefore - gasleft();
+
+        emit log_named_uint("Close trade gas cost", gasUsedClose);
+        assertLt(gasUsedClose, maxGasClose, "Close trade gas cost exceeds ceiling");
+    }
+
+    function isMarketReduceOnly(uint128 marketId) internal view returns (bool) {
+        return IPassivePerpProxy(sec.perp).getMarketConfiguration(marketId).maxOpenBase == 0;
+    }
+
+    function check_MatchOrder_ReduceOnlyWhenMaxOiZero(uint128 marketId, uint128 poolAccountId) internal {
+        mockFreshPrices();
+
+        MarketConfigurationData memory marketConfig = IPassivePerpProxy(sec.perp).getMarketConfiguration(marketId);
+        assertEq(marketConfig.maxOpenBase, 0, "market is not reduce-only");
+
+        int256 poolBase = IPassivePerpProxy(sec.perp).getUpdatedPositionInfo(marketId, poolAccountId).base;
+        int256 unit = int256(marketConfig.minimumOrderBase);
+
+        (address user,) = makeAddrAndKey(string.concat("userReduceOnly_", vm.toString(marketId)));
+        uint128 accountId = depositNewMA(user, sec.usdc, 1_000_000e6);
+
+        // 1) Increasing open interest must always revert on a reduce-only market. Trade the opposite side of the
+        //    pool: pool long -> user sells; pool short or flat -> user buys (when flat, any direction increases OI).
+        SD59x18 increaseBase = poolBase > 0 ? sd(-unit) : sd(unit);
+        UD60x18 increasePriceLimit = poolBase > 0 ? ud(0) : ud(1_000_000_000e18);
+
+        Command_Core[] memory commands = new Command_Core[](1);
+        commands[0] = getMatchOrderCoreCommand(marketId, increaseBase, increasePriceLimit);
+        vm.prank(user);
+        vm.expectRevert(abi.encodeWithSelector(IPassivePerpProxy.OpenInterestExceeded.selector, marketId));
+        ICoreProxy(sec.core).execute(accountId, commands);
+
+        // A reducing trade is only possible when the pool holds at least one minimum order. The reducing side
+        // must be at least `minimumOrderBase` (a smaller resulting position reverts with SmallOrderSize) yet no
+        // larger than the pool's own position (a larger one flips the pool and raises OI on the other side,
+        // reverting with OpenInterestExceeded). So a pool position below one `minimumOrderBase` (abs(poolBase) <
+        // unit, which also covers the flat case) is dust that cannot be reduced by any valid order and there is
+        // nothing to assert here — e.g. market 69 sitting at 0.1 base against a 1.0 minimum order, which would
+        // otherwise overshoot to +0.9 and revert.
+        if (poolBase > -unit && poolBase < unit) {
+            return;
+        }
+
+        // 2) Check trades are allowed if OI is unchanged
+        int256 reduceBase = poolBase > 0 ? unit : -unit;
+        uint256 oiBefore = IPassivePerpProxy(sec.perp).getOpenBaseInterest(marketId);
+        executeCoreMatchOrder({
+            marketId: marketId,
+            sender: user,
+            base: sd(reduceBase),
+            priceLimit: poolBase > 0 ? ud(1_000_000_000e18) : ud(0),
+            accountId: accountId
+        });
+        uint256 oiAfter = IPassivePerpProxy(sec.perp).getOpenBaseInterest(marketId);
+        assertLe(oiAfter, oiBefore, "open interest must not increase when reducing");
+
+        // the user (previously flat) now holds exactly the reducing unit
+        assertEq(
+            IPassivePerpProxy(sec.perp).getUpdatedPositionInfo(marketId, accountId).base,
+            reduceBase,
+            "reducing unit was not added to the user's position"
+        );
+    }
+}

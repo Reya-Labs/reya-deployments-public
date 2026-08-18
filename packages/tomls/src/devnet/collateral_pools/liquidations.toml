@@ -1,0 +1,29 @@
+# Devnet liquidations: skips pool_account_activate_market (not needed in perpOB).
+#
+# Backstop LP: devnet has no PassivePool account linked to its Core, so the
+# backstop account is a standalone margin account (settings.cp1Rusd_backstopLpAccountId,
+# hardcoded in omnibus/reya_devnet.toml) created + funded + market-activated
+# out-of-band, then wired here by calling setBackstopLPConfig directly on
+# CoreProxy (NOT via PassivePoolProxy.sendCallToCore). Config mirrors
+# cronos/mainnet (15% liquidation fee, zero thresholds).
+[invoke.cp_1rusd_set_backstop_lp_config]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.cp1RusdId %>"]
+func = "setBackstopLPConfig"
+args = [
+    "<%= settings.cp1RusdId %>",
+    { accountId = "<%= settings.cp1Rusd_backstopLpAccountId %>", liquidationFee = "<%= parseEther(settings.cp1Rusd_backstopLp_liquidationFeeUnscaled) %>", minFreeCollateralThresholdInUSD = "<%= parseEther(settings.cp1Rusd_backstopLp_minFreeCollateralThresholdInUSDUnscaled) %>", withdrawCooldownDurationInSeconds_DEPRECATED = "0", withdrawDurationInSeconds_DEPRECATED = "0" },
+]
+depends = ["var.cp_1rusd_vars"]
+
+[invoke.cp_1rusd_configure_liquidation]
+target = ["CoreProxy"]
+fromCall.func = "getCollateralPoolOwner"
+fromCall.args = ["<%= settings.cp1RusdId %>"]
+func = "configureLiquidation"
+args = [
+    "<%= settings.cp1RusdId %>",
+    { bidKeeperFee = "<%= parseEther(settings.cp1Rusd_bidKeeperFeeUnscaled) %>", queueDurationInSeconds = "<%= settings.cp1Rusd_queueDurationInSeconds %>", maxOrdersInBid = "<%= settings.cp1Rusd_maxOrdersInBid %>", maxBidsInQueue = "<%= settings.cp1Rusd_maxBidsInQueue %>", bidScoreWeight = "<%= parseEther(settings.cp1Rusd_bidScoreWeightUnscaled) %>", backstopKeeperFee = "<%= parseEther(settings.cp1Rusd_backstopKeeperFeeUnscaled) %>", adlExecutionKeeperFee = "<%= parseEther(settings.cp1Rusd_adlExecutionKeeperFeeUnscaled) %>", dDutchMin = "<%= parseEther(settings.cp1Rusd_dDutchMinUnscaled) %>", dMax = "<%= parseEther(settings.cp1Rusd_dMaxUnscaled) %>" },
+]
+depends = ["var.cp_1rusd_vars"]
